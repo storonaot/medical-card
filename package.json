@@ -11,7 +11,6 @@
   "author": "",
   "license": "",
   "devDependencies": {
-    "electron": "~1.7.8",
     "babel-core": "^6.26.0",
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.1.2",
@@ -19,6 +18,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
     "css-loader": "^0.28.7",
+    "electron": "~1.7.8",
     "eslint": "^4.5.0",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-loader": "^1.9.0",
@@ -47,15 +47,16 @@
     "body-parser": "^1.18.2",
     "classnames": "^2.2.5",
     "css-wipe": "^4.3.0",
+    "express": "^4.16.2",
     "formsy-react": "^0.19.5",
     "lodash": "^4.17.4",
+    "material-ui": "^0.19.4",
+    "path": "^0.12.7",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-bootstrap-table": "^4.0.2",
     "react-dom": "^15.6.1",
     "react-router": "^3.0.0",
-    "utils": "^0.3.1",
-    "express": "^4.16.2",
-    "path": "^0.12.7"
+    "utils": "^0.3.1"
   }
 }

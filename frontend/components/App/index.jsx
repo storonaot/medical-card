@@ -1,16 +1,14 @@
-import { Link } from 'react-router'
+import { Header } from '_shared'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import styles from './styles'
 
-const handleClick = () => { console.log('click') }
-
 const App = ({ children }) => (
-  <div className={styles.app}>
-    Hello REACT
-    <button onClick={handleClick}>Click</button>
-    <Link to="/">Home</Link>
-    <Link to="test">test</Link>
-    {children}
-  </div>
+  <MuiThemeProvider>
+    <div className={styles.app}>
+      <Header />
+      {children}
+    </div>
+  </MuiThemeProvider>
 )
 
 export default App
