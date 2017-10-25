@@ -6,6 +6,9 @@
 <body>
   <div id="root"></div>
   Hi
-  <script>require('./public/bundles/modules.bundle.js')</script>
+  <script>
+    const path = require('path')
+    require(path.join(__dirname, './public/bundles/modules.bundle.js'))
+  </script>
 </body>
 </html>

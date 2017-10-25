@@ -8,10 +8,10 @@ module.exports = {
     modules: './javascripts/index.js'
   },
   output: {
-    path: path.resolve(__dirname, 'public/bundles/'),
+    path: path.resolve(__dirname, './public/bundles/'),
     publicPath: '/',
-    filename: '[name].bundle.js',
-    chunkFilename: '[id].bundle.js'
+    filename: '[name].bundle.js'
+    // chunkFilename: '[id].bundle.js'
   },
   module: {
     rules: [
@@ -36,23 +36,23 @@ module.exports = {
           'css-loader'
         ]
       },
-      {
-        test: /\.css$/,
-        exclude: [
-          path.resolve(__dirname, 'node_modules/css-wipe'),
-        ],
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              modules: true,
-              localIdentName: '[name]__[local]___[hash:base64:5]'
-            }
-          }
-        ]
-      },
+      // {
+      //   test: /\.css$/,
+      //   exclude: [
+      //     path.resolve(__dirname, 'node_modules/css-wipe'),
+      //   ],
+      //   use: [
+      //     'style-loader',
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         importLoaders: 1,
+      //         modules: true,
+      //         localIdentName: '[name]__[local]___[hash:base64:5]'
+      //       }
+      //     }
+      //   ]
+      // },
       {
         test: /\.sss/,
         use: [
