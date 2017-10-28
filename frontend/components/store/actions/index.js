@@ -1,3 +1,3 @@
-import { toggleSidebar, test } from './_ui'
+import { setUser, dastroyUser } from './_user'
 
-export { toggleSidebar, test }
+export { setUser, dastroyUser }

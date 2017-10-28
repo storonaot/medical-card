@@ -1,5 +1,8 @@
+import { connect } from 'react-redux'
+import { setUser } from 'store/actions'
 import Paper from 'material-ui/Paper'
 import { Tabs, Tab } from 'material-ui/Tabs'
+import firebase from 'fBase'
 import SignIn from './SignIn'
 import SignUp from './SignUp'
 import styles from './styles'
@@ -10,23 +13,44 @@ class Auth extends React.Component {
     this.state = {
       currentTab: 'signIn', // signIn, signUp
       signIn: {
-        login: '',
+        // login: '',
+        email: '',
         passPhrase: ''
       },
       signUp: {
-        login: '',
+        // login: '',
         email: '',
         passPhrase: '',
-        passPhraseRepeat: '',
-        isDoctor: false
+        passPhraseRepeat: ''
+        // isDoctor: false
       }
     }
 
     this.updateStateValue = this.updateStateValue.bind(this)
+    this.auth = this.auth.bind(this)
   }
 
   changeTab(currentTab) {
     this.setState({ currentTab })
+  }
+
+  auth() {
+    const { currentTab } = this.state
+    const { passPhrase, email } = this.state[currentTab]
+    firebase.auth().createUserWithEmailAndPassword(email, passPhrase)
+      .then((responce) => {
+        console.log('responce', responce)
+        if (currentTab === 'signUp') this.createKeys(passPhrase)
+        // this.props.router.push('/Home')
+        // this.props.onSetUser({ email: 'user' })
+      }, (error) => {
+        console.error('error', error.message)
+      })
+  }
+
+  createKeys(passPhrase) {
+    console.log(this)
+    console.log(passPhrase)
   }
 
   updateStateValue(name, value) {
@@ -39,6 +63,7 @@ class Auth extends React.Component {
   }
 
   render() {
+    console.log(this.props)
     const { currentTab, signIn, signUp } = this.state
     return (
       <div className={styles.authWrapper}>
@@ -49,12 +74,20 @@ class Auth extends React.Component {
         >
           <Tab label="Sign In" value="signIn">
             <Paper className={styles.paper}>
-              <SignIn data={signIn} updateValue={this.updateStateValue} />
+              <SignIn
+                data={signIn}
+                updateValue={this.updateStateValue}
+                signIn={this.auth}
+              />
             </Paper>
           </Tab>
           <Tab label="Sign Up" value="signUp">
             <Paper className={styles.paper}>
-              <SignUp data={signUp} updateValue={this.updateStateValue} />
+              <SignUp
+                data={signUp}
+                updateValue={this.updateStateValue}
+                signUp={this.auth}
+              />
             </Paper>
           </Tab>
         </Tabs>
@@ -63,4 +96,14 @@ class Auth extends React.Component {
   }
 }
 
-export default Auth
+export default connect(
+  (state, ownProps) => ({
+    user: state.user,
+    ownProps
+  }),
+  dispatch => ({
+    onSetUser: (data) => {
+      dispatch(setUser(data))
+    }
+  })
+)(Auth)

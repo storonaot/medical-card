@@ -22,8 +22,7 @@
     "React": true,
     "_": true,
     "PropTypes": true,
-    "Web3": true,
-    "web3": true
+    "firebase": true
   },
   "env": {
     "browser": true

@@ -10,14 +10,22 @@ import App from 'App'
 import Test from 'Test'
 import Auth from 'Auth'
 import reducer from 'store/reducers'
-import axios from 'axios'
+// import axios from 'axios'
 import '../stylesheets/default'
 
 const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)))
 const history = syncHistoryWithStore(hashHistory, store)
 
-axios.defaults.baseURL = 'http://localhost:3000/'
-// axios.get('/').then((responce) => { console.log('responce', responce) })
+// axios.defaults.baseURL = 'http://localhost:3000/'
+// axios.get('/').then((responce) => { console.log('responce', responce.data) })
+// const data = {
+//   login: 'login',
+//   email: 'email',
+//   passPhrase: 'passPhrase',
+//   isDoctor: false
+// }
+// axios.post('/login', data).then((responce) => { console.log('responce', responce.data) })
+
 
 render(
   <Provider store={store}>

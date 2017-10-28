@@ -1,16 +1,16 @@
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
-import Checkbox from 'material-ui/Checkbox'
+// import Checkbox from 'material-ui/Checkbox'
 import styles from '../styles'
 
-const SignUp = ({ data, updateValue }) => (
+const SignUp = ({ data, updateValue, signUp }) => (
   <div className={styles.controlsWrapper}>
-    <TextField
+    {/* <TextField
       floatingLabelText="Login"
       fullWidth
       onChange={(e) => { updateValue('login', e.target.value) }}
       value={data.login}
-    />
+    /> */}
     <TextField
       floatingLabelText="Email"
       fullWidth
@@ -30,13 +30,17 @@ const SignUp = ({ data, updateValue }) => (
       onChange={(e) => { updateValue('passPhraseRepeat', e.target.value) }}
       value={data.passPhraseRepeat}
     />
-    <Checkbox
+    {/* <Checkbox
       label="I'm a doctor"
       className={`${styles.checkbox} ${styles.lastField}`}
       checked={data.isDoctor}
       onCheck={() => { updateValue('isDoctor', !data.isDoctor) }}
+    /> */}
+    <RaisedButton
+      secondary
+      label="Sign Up"
+      onClick={signUp}
     />
-    <RaisedButton secondary label="Sign Up" />
   </div>
 )
 
@@ -44,5 +48,6 @@ export default SignUp
 
 SignUp.propTypes = {
   data: PropTypes.shape({}).isRequired,
-  updateValue: PropTypes.func.isRequired
+  updateValue: PropTypes.func.isRequired,
+  signUp: PropTypes.func.isRequired
 }
