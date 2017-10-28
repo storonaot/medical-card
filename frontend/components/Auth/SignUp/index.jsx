@@ -1,3 +1,48 @@
-const SignUp = () => (<div>Sign Up</div>)
+import RaisedButton from 'material-ui/RaisedButton'
+import TextField from 'material-ui/TextField'
+import Checkbox from 'material-ui/Checkbox'
+import styles from '../styles'
+
+const SignUp = ({ data, updateValue }) => (
+  <div className={styles.controlsWrapper}>
+    <TextField
+      floatingLabelText="Login"
+      fullWidth
+      onChange={(e) => { updateValue('login', e.target.value) }}
+      value={data.login}
+    />
+    <TextField
+      floatingLabelText="Email"
+      fullWidth
+      onChange={(e) => { updateValue('email', e.target.value) }}
+      value={data.email}
+    />
+    <TextField
+      floatingLabelText="Pass Phrase"
+      fullWidth
+      onChange={(e) => { updateValue('passPhrase', e.target.value) }}
+      value={data.passPhrase}
+    />
+    <TextField
+      floatingLabelText="Pass Phrase Repeat"
+      fullWidth
+      className={styles.lastField}
+      onChange={(e) => { updateValue('passPhraseRepeat', e.target.value) }}
+      value={data.passPhraseRepeat}
+    />
+    <Checkbox
+      label="I'm a doctor"
+      className={`${styles.checkbox} ${styles.lastField}`}
+      checked={data.isDoctor}
+      onCheck={() => { updateValue('isDoctor', !data.isDoctor) }}
+    />
+    <RaisedButton secondary label="Sign Up" />
+  </div>
+)
 
 export default SignUp
+
+SignUp.propTypes = {
+  data: PropTypes.shape({}).isRequired,
+  updateValue: PropTypes.func.isRequired
+}

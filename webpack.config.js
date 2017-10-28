@@ -110,12 +110,18 @@ module.exports = {
   ],
   devServer: {
     host: 'localhost',
-    proxy: {
-      '*': 'http://127.0.0.1:3000'
-    },
+    // proxy: {
+    //   '*': 'http://127.0.0.1:3000'
+    // },
     port: 8080,
-    contentBase: path.join(__dirname, 'public'),
-    historyApiFallback: true,
+    // contentBase: path.join(__dirname, 'public'),
+    // historyApiFallback: true,
+    historyApiFallback: {
+      index: 'index.html'
+    },
+    allowedHosts: [
+      'http://127.0.0.1:3000'
+    ],
     hot: true
   }
 }
