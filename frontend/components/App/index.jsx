@@ -1,6 +1,6 @@
-import { Header } from '_shared'
+import { Header, Navbar } from '_shared'
 import { connect } from 'react-redux'
-import { toggleSidebar, registerUserInApp } from 'store/actions'
+import { toggleSidebar, registerUserInApp, destroyUser } from 'store/actions'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import { getDataFromLS } from 'helpers'
 import firebase from 'libs/firebase'
@@ -11,6 +11,8 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {}
+
+    // this.signOut = this.signOut.bind(this)
   }
 
   componentDidMount() {
@@ -28,6 +30,10 @@ class App extends React.Component {
 
   render() {
     const { children, sidebarOpened, user } = this.props
+    const getUserName = () => {
+      if (user) return user.firstName || user.email
+      return null
+    }
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div className={styles.app}>
@@ -35,8 +41,13 @@ class App extends React.Component {
             toggleSidebar={this.props.onToggleSidebar}
             sidebarOpened={sidebarOpened}
             logged={!!user}
+            userName={getUserName()}
+            signOut={this.props.onDestroyUser}
           />
-          <div className={styles.content}>{children}</div>
+          <div className={styles.content}>
+            <Navbar sidebarOpened={sidebarOpened} />
+            {children}
+          </div>
         </div>
       </MuiThemeProvider>
     )
@@ -54,6 +65,9 @@ export default connect(
     },
     onRegisterUserInApp: (data) => {
       dispatch(registerUserInApp(data))
+    },
+    onDestroyUser: () => {
+      dispatch(destroyUser())
     }
   })
 )(App)
@@ -66,6 +80,7 @@ App.propTypes = {
   onToggleSidebar: PropTypes.func.isRequired,
   sidebarOpened: PropTypes.bool.isRequired,
   onRegisterUserInApp: PropTypes.func.isRequired,
+  onDestroyUser: PropTypes.func.isRequired,
   location: PropTypes.shape({
     path: PropTypes.string
   }).isRequired,

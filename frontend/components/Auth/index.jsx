@@ -2,7 +2,8 @@ import { connect } from 'react-redux'
 import { createNewUser, authUser } from 'store/actions'
 import Paper from 'material-ui/Paper'
 import { Tabs, Tab } from 'material-ui/Tabs'
-// import { hasEmptyValues } from 'helpers'
+import Snackbar from 'material-ui/Snackbar'
+import { hasEmptyValues } from 'helpers'
 import SignIn from './SignIn'
 import SignUp from './SignUp'
 import styles from './styles'
@@ -11,14 +12,14 @@ class Auth extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      snackbarShow: false,
+      snackbarMsg: '',
       currentTab: 'signIn', // signIn, signUp
       signIn: {
-        // login: '',
         email: '',
         passPhrase: ''
       },
       signUp: {
-        // login: '',
         email: '',
         passPhrase: '',
         passPhraseRepeat: '',
@@ -34,26 +35,32 @@ class Auth extends React.Component {
     this.setState({ currentTab })
   }
 
-  disabledButton() {
-    console.log(this)
-    // const { currentTab } = this.state
-    // return hasEmptyValues(this.state[currentTab])
+  passMatch() {
+    const { passPhrase, passPhraseRepeat } = this.state.signUp
+    if (passPhrase === passPhraseRepeat) return true
     return false
+  }
+
+  disabledButton() {
+    const { currentTab } = this.state
+    return hasEmptyValues(this.state[currentTab]) || !this.passMatch()
+  }
+
+  showSnack(msg) {
+    this.setState({ snackbarMsg: msg }, () => { this.setState({ snackbarShow: true }) })
   }
 
   auth() {
     const { currentTab } = this.state
     if (currentTab === 'signUp') {
       this.props.onCreateNewUser(this.state[currentTab]).then((responce) => {
-        // console.log('onCreateNewUser', responce)
-        if (responce.type === 'error') console.error(responce.message)
-        else this.props.router.push('test')
+        if (responce.type === 'error') this.showSnack(responce.error.message)
+        else this.props.router.push(`profile/${responce.uid}`)
       })
     } else if (currentTab === 'signIn') {
       this.props.onAuthUser(this.state[currentTab]).then((responce) => {
-        // console.log('onAuthUser', responce)
-        if (responce.type === 'error') console.error(responce.message)
-        else this.props.router.push('test')
+        if (responce.type === 'error') this.showSnack(responce.error.message)
+        else this.props.router.push(`profile/${responce.uid}`)
       })
     }
   }
@@ -68,7 +75,6 @@ class Auth extends React.Component {
   }
 
   render() {
-    console.log(this.props)
     const { currentTab, signIn, signUp } = this.state
     return (
       <div className={styles.authWrapper}>
@@ -98,6 +104,12 @@ class Auth extends React.Component {
             </Paper>
           </Tab>
         </Tabs>
+        <Snackbar
+          open={this.state.snackbarShow}
+          message={this.state.snackbarMsg}
+          autoHideDuration={4000}
+          onRequestClose={() => { this.setState({ snackbarShow: false }) }}
+        />
       </div>
     )
   }

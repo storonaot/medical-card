@@ -12,7 +12,11 @@ const getPayloadata = responce => ({
 })
 
 export const destroyUser = () => (dispatch) => {
-  dispatch({ type: 'DESTROY_USER' })
+  firebase.auth().signOut().then(() => {
+    dispatch({ type: 'DESTROY_USER' })
+  }, (error) => {
+    console.error('destroyUser error', error)
+  })
   // firebase.auth().signOut().then(function() {
   //   // Sign-out successful.
   // }).catch(function(error) {
@@ -33,11 +37,8 @@ export const createNewUser = data => (dispatch) => {
         payload: payloadData
       })
       firebase.database().ref(`users/${responce.uid}`).set(payloadData)
-      return { type: 'success', responce }
-    }, (error) => {
-      console.error('createNewUser', error)
-      return { type: 'error', error }
-    })
+      return { type: 'success', uid: responce.uid }
+    }, error => ({ type: 'error', error }))
 }
 
 export const authUser = data => (dispatch) => {
@@ -51,15 +52,11 @@ export const authUser = data => (dispatch) => {
           payload: snapshot.val()
         })
       })
-      return responce
-    }, (error) => {
-      console.error('authUser', error)
-      return { type: 'error', error }
-    })
+      return { type: 'success', uid: responce.uid }
+    }, error => ({ type: 'error', error }))
 }
 
 export const registerUserInApp = data => (dispatch) => {
-  console.log('registerUserInApp', data)
   dispatch({
     type: 'REGISTER_USER_IN_APP',
     payload: data

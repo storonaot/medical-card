@@ -1,7 +1,7 @@
 const hasEmptyValues = (obj) => {
   const empties = []
   _.forEach(obj, (value, key) => {
-    if (!value) empties.push(key)
+    if (value === null || value === '') empties.push(key)
   })
 
   return !!empties.length

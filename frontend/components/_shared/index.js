@@ -1,4 +1,4 @@
 import Header from './Header'
-import Test from './Test'
+import Navbar from './Navbar'
 
-export { Header, Test }
+export { Header, Navbar }

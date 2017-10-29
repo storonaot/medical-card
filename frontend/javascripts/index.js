@@ -7,6 +7,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import thunk from 'redux-thunk'
 import { syncHistoryWithStore } from 'react-router-redux'
 import App from 'App'
+import Profile from 'Profile'
 import Test from 'Test'
 import Auth from 'Auth'
 import Home from 'Home'
@@ -25,7 +26,7 @@ function requireAuth(nextState, replace) {
 
 function isAutorized(nextState, replace) {
   if (getDataFromLS()) {
-    replace({ pathname: 'test' })
+    replace({ pathname: `profile/${getDataFromLS().uid}` })
   }
 }
 
@@ -34,6 +35,7 @@ render(
     <Router history={history}>
       <Route path="/" component={App}>
         <IndexRoute component={Auth} onEnter={isAutorized} />
+        <Route path="profile/:uid" component={Profile} onEnter={requireAuth} />
         <Route path="test" component={Test} onEnter={requireAuth} />
         <Route path="home" component={Home} onEnter={requireAuth} />
       </Route>
