@@ -34,7 +34,10 @@ export const createNewUser = data => (dispatch) => {
       })
       firebase.database().ref(`users/${responce.uid}`).set(payloadData)
       return { type: 'success', responce }
-    }, error => ({ type: 'error', error }))
+    }, (error) => {
+      console.error('createNewUser', error)
+      return { type: 'error', error }
+    })
 }
 
 export const authUser = data => (dispatch) => {
@@ -49,10 +52,14 @@ export const authUser = data => (dispatch) => {
         })
       })
       return responce
-    }, error => ({ type: 'error', error }))
+    }, (error) => {
+      console.error('authUser', error)
+      return { type: 'error', error }
+    })
 }
 
 export const registerUserInApp = data => (dispatch) => {
+  console.log('registerUserInApp', data)
   dispatch({
     type: 'REGISTER_USER_IN_APP',
     payload: data

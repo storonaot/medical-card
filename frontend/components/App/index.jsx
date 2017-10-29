@@ -14,14 +14,16 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    if (getDataFromLS()) {
-      const uid = getDataFromLS().uid
-      firebase.database().ref(`/users/${uid}`).once('value').then((snapshot) => {
-        this.props.onRegisterUserInApp(snapshot.val())
-      })
-    } else if (!getDataFromLS && this.props.location.path !== '/') {
-      this.props.router.push('/')
-    }
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user && getDataFromLS()) {
+        const uid = getDataFromLS().uid
+        firebase.database().ref(`/users/${uid}`).once('value').then((snapshot) => {
+          this.props.onRegisterUserInApp(snapshot.val())
+        })
+      } else if (!(user && getDataFromLS()) && this.props.location.path !== '/') {
+        this.props.router.replace('/')
+      }
+    })
   }
 
   render() {
@@ -64,15 +66,15 @@ App.propTypes = {
   onToggleSidebar: PropTypes.func.isRequired,
   sidebarOpened: PropTypes.bool.isRequired,
   onRegisterUserInApp: PropTypes.func.isRequired,
+  location: PropTypes.shape({
+    path: PropTypes.string
+  }).isRequired,
+  router: PropTypes.shape({
+    replace: PropTypes.func
+  }).isRequired,
   user: PropTypes.shape({}),
   children: PropTypes.oneOfType([
     PropTypes.element,
     PropTypes.arrayOf(PropTypes.element)
-  ]).isRequired,
-  router: PropTypes.shape({
-    push: PropTypes.func
-  }).isRequired,
-  location: PropTypes.shape({
-    path: PropTypes.string
-  }).isRequired
+  ]).isRequired
 }

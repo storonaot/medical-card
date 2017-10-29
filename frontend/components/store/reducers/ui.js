@@ -1,6 +1,5 @@
 const defaultState = {
-  sidebarOpened: false,
-  logged: false
+  sidebarOpened: false
 }
 
 export default function ui(state = defaultState, action) {
