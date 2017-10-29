@@ -10,29 +10,37 @@ import App from 'App'
 import Test from 'Test'
 import Auth from 'Auth'
 import reducer from 'store/reducers'
-// import axios from 'axios'
+// import firebase from 'libs/firebase'
+import { getDataFromLS } from 'helpers'
 import '../stylesheets/default'
 
 const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)))
 const history = syncHistoryWithStore(hashHistory, store)
 
-// axios.defaults.baseURL = 'http://localhost:3000/'
-// axios.get('/').then((responce) => { console.log('responce', responce.data) })
-// const data = {
-//   login: 'login',
-//   email: 'email',
-//   passPhrase: 'passPhrase',
-//   isDoctor: false
+// function loggedIn() {
+//   const user = firebase.auth().currentUser
+//   if (user) return true
+//   return false
 // }
-// axios.post('/login', data).then((responce) => { console.log('responce', responce.data) })
+//
+function requireAuth(nextState, replace) {
+  if (!getDataFromLS()) {
+    replace({ pathname: '/' })
+  }
+}
 
+function isAutorized(nextState, replace) {
+  if (getDataFromLS()) {
+    replace({ pathname: 'test' })
+  }
+}
 
 render(
   <Provider store={store}>
     <Router history={history}>
       <Route path="/" component={App}>
-        <IndexRoute component={Auth} />
-        <Route path="test" component={Test} />
+        <IndexRoute component={Auth} onEnter={isAutorized} />
+        <Route path="test" component={Test} onEnter={requireAuth} />
       </Route>
     </Router>
   </Provider>,

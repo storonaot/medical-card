@@ -1,8 +1,8 @@
 import { connect } from 'react-redux'
-import { setUser } from 'store/actions'
+import { createNewUser, authUser } from 'store/actions'
 import Paper from 'material-ui/Paper'
 import { Tabs, Tab } from 'material-ui/Tabs'
-import firebase from 'fBase'
+// import { hasEmptyValues } from 'helpers'
 import SignIn from './SignIn'
 import SignUp from './SignUp'
 import styles from './styles'
@@ -21,8 +21,8 @@ class Auth extends React.Component {
         // login: '',
         email: '',
         passPhrase: '',
-        passPhraseRepeat: ''
-        // isDoctor: false
+        passPhraseRepeat: '',
+        isDoctor: false
       }
     }
 
@@ -34,23 +34,28 @@ class Auth extends React.Component {
     this.setState({ currentTab })
   }
 
-  auth() {
-    const { currentTab } = this.state
-    const { passPhrase, email } = this.state[currentTab]
-    firebase.auth().createUserWithEmailAndPassword(email, passPhrase)
-      .then((responce) => {
-        console.log('responce', responce)
-        if (currentTab === 'signUp') this.createKeys(passPhrase)
-        // this.props.router.push('/Home')
-        // this.props.onSetUser({ email: 'user' })
-      }, (error) => {
-        console.error('error', error.message)
-      })
+  disabledButton() {
+    console.log(this)
+    // const { currentTab } = this.state
+    // return hasEmptyValues(this.state[currentTab])
+    return false
   }
 
-  createKeys(passPhrase) {
-    console.log(this)
-    console.log(passPhrase)
+  auth() {
+    const { currentTab } = this.state
+    if (currentTab === 'signUp') {
+      this.props.onCreateNewUser(this.state[currentTab]).then((responce) => {
+        // console.log('onCreateNewUser', responce)
+        if (responce.type === 'error') console.error(responce.message)
+        else this.props.router.push('test')
+      })
+    } else if (currentTab === 'signIn') {
+      this.props.onAuthUser(this.state[currentTab]).then((responce) => {
+        // console.log('onAuthUser', responce)
+        if (responce.type === 'error') console.error(responce.message)
+        else this.props.router.push('test')
+      })
+    }
   }
 
   updateStateValue(name, value) {
@@ -78,6 +83,7 @@ class Auth extends React.Component {
                 data={signIn}
                 updateValue={this.updateStateValue}
                 signIn={this.auth}
+                disabledButton={this.disabledButton()}
               />
             </Paper>
           </Tab>
@@ -87,6 +93,7 @@ class Auth extends React.Component {
                 data={signUp}
                 updateValue={this.updateStateValue}
                 signUp={this.auth}
+                disabledButton={this.disabledButton()}
               />
             </Paper>
           </Tab>
@@ -102,8 +109,19 @@ export default connect(
     ownProps
   }),
   dispatch => ({
-    onSetUser: (data) => {
-      dispatch(setUser(data))
-    }
+    onCreateNewUser: data => (
+      dispatch(createNewUser(data))
+    ),
+    onAuthUser: data => (
+      dispatch(authUser(data))
+    )
   })
 )(Auth)
+
+Auth.propTypes = {
+  onCreateNewUser: PropTypes.func.isRequired,
+  onAuthUser: PropTypes.func.isRequired,
+  router: PropTypes.shape({
+    push: PropTypes.func
+  }).isRequired
+}

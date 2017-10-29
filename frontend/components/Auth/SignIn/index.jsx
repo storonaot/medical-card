@@ -2,7 +2,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 import styles from '../styles'
 
-const SignIn = ({ data, updateValue, signIn }) => (
+const SignIn = ({ data, updateValue, signIn, disabledButton }) => (
   <div className={styles.controlsWrapper}>
     {/* <TextField
       floatingLabelText="Login"
@@ -20,6 +20,7 @@ const SignIn = ({ data, updateValue, signIn }) => (
       floatingLabelText="Pass Phrase"
       className={styles.lastField}
       fullWidth
+      type="password"
       onChange={(e) => { updateValue('passPhrase', e.target.value) }}
       value={data.passPhrase}
     />
@@ -27,6 +28,7 @@ const SignIn = ({ data, updateValue, signIn }) => (
       secondary
       label="Sign In"
       onClick={signIn}
+      disabled={disabledButton}
     />
   </div>
 )
@@ -36,5 +38,6 @@ export default SignIn
 SignIn.propTypes = {
   data: PropTypes.shape({}).isRequired,
   updateValue: PropTypes.func.isRequired,
-  signIn: PropTypes.func.isRequired
+  signIn: PropTypes.func.isRequired,
+  disabledButton: PropTypes.bool.isRequired
 }

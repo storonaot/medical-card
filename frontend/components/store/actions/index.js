@@ -1,3 +1,4 @@
-import { setUser, dastroyUser } from './_user'
+import { dastroyUser, createNewUser, authUser, registerUserInApp } from './_user'
+import { toggleSidebar } from './_ui'
 
-export { setUser, dastroyUser }
+export { dastroyUser, toggleSidebar, createNewUser, authUser, registerUserInApp }
