@@ -4,14 +4,32 @@ import Paper from 'material-ui/Paper'
 import { Tabs, Tab } from 'material-ui/Tabs'
 import Snackbar from 'material-ui/Snackbar'
 import { hasEmptyValues } from 'helpers'
+// import cryptico from 'cryptico-js'
 import SignIn from './SignIn'
 import SignUp from './SignUp'
 import styles from './styles'
+
+// const PassPhrase = 'The Moon is a Harsh Mistress.'
+// const Bits = 1024
+// const MattsRSAkey = cryptico.generateRSAKey(PassPhrase, Bits)
+// console.log('MattsRSAkey', MattsRSAkey)
+// const MattsPublicKeyString = cryptico.publicKeyString(MattsRSAkey)
+//
+// const PlainText = 'Matt, I need you to help me with my Starcraft strategy.'
+// const EncryptionResult = cryptico.encrypt(PlainText, MattsPublicKeyString)
+// console.log('EncryptionResult', EncryptionResult)
+//
+// const cipherText = EncryptionResult.cipher
+//
+// const DecryptionResult = cryptico.decrypt(cipherText, MattsRSAkey)
+//
+// console.log('DecryptionResult', DecryptionResult)
 
 class Auth extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      pair: null,
       snackbarShow: false,
       snackbarMsg: '',
       currentTab: 'signIn', // signIn, signUp
@@ -29,6 +47,8 @@ class Auth extends React.Component {
 
     this.updateStateValue = this.updateStateValue.bind(this)
     this.auth = this.auth.bind(this)
+
+    this.generateKeyPair = this.generateKeyPair.bind(this)
   }
 
   changeTab(currentTab) {
@@ -74,6 +94,10 @@ class Auth extends React.Component {
     this.setState({ [currentTab]: data })
   }
 
+  generateKeyPair() {
+    this.setState({ pair: null })
+  }
+
   render() {
     const { currentTab, signIn, signUp } = this.state
     return (
@@ -92,6 +116,7 @@ class Auth extends React.Component {
                 disabledButton={this.disabledButton()}
               />
             </Paper>
+            <button onClick={this.generateKeyPair}>Generate Key Pair</button>
           </Tab>
           <Tab label="Sign Up" value="signUp">
             <Paper className={styles.paper}>
