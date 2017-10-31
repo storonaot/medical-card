@@ -4,10 +4,15 @@ import Paper from 'material-ui/Paper'
 import { Tabs, Tab } from 'material-ui/Tabs'
 import Snackbar from 'material-ui/Snackbar'
 import { hasEmptyValues } from 'helpers'
-// import cryptico from 'cryptico-js'
+import path from 'path'
+import cryptico from 'cryptico-js'
 import SignIn from './SignIn'
 import SignUp from './SignUp'
 import styles from './styles'
+
+const electron = window.require('electron')
+const fs = electron.remote.require('fs')
+// const ipcRenderer = electron.ipcRenderer
 
 // const PassPhrase = 'The Moon is a Harsh Mistress.'
 // const Bits = 1024
@@ -24,6 +29,21 @@ import styles from './styles'
 // const DecryptionResult = cryptico.decrypt(cipherText, MattsRSAkey)
 //
 // console.log('DecryptionResult', DecryptionResult)
+
+console.log((electron.app || electron.remote.app).getPath('userData'))
+
+const createFile = (uid, fileContent) => {
+  console.log('createFile')
+
+  const userDataPath = (electron.app || electron.remote.app).getPath('userData')
+  const filepath = path.join(userDataPath, `keys_${uid}.json`)
+
+  fs.writeFile(filepath, fileContent, (err) => {
+    if (err) throw err
+
+    console.log('The file was succesfully saved!')
+  })
+}
 
 class Auth extends React.Component {
   constructor(props) {
@@ -75,7 +95,10 @@ class Auth extends React.Component {
     if (currentTab === 'signUp') {
       this.props.onCreateNewUser(this.state[currentTab]).then((responce) => {
         if (responce.type === 'error') this.showSnack(responce.error.message)
-        else this.props.router.push(`profile/${responce.uid}`)
+        else {
+          this.generateKeyPair(responce.uid)
+          this.props.router.push(`profile/${responce.uid}`)
+        }
       })
     } else if (currentTab === 'signIn') {
       this.props.onAuthUser(this.state[currentTab]).then((responce) => {
@@ -94,7 +117,18 @@ class Auth extends React.Component {
     this.setState({ [currentTab]: data })
   }
 
-  generateKeyPair() {
+  generateKeyPair(uid) {
+    console.log('generateKeyPair')
+    const { currentTab } = this.state
+    const { passPhrase } = this.state[currentTab]
+    const bits = 1024
+    const userRSAkey = cryptico.generateRSAKey(passPhrase, bits)
+    // const userPubKey = cryptico.publicKeyString(userRSAkey)
+    // const plainText = 'Matt, I need you to help me with my Starcraft strategy.'
+    // const encryptionResult = cryptico.encrypt(plainText, userPubKey)
+    // const cipherText = encryptionResult.cipher
+    // const DecryptionResult = cryptico.decrypt(cipherText, userRSAkey)
+    createFile(uid, JSON.stringify(userRSAkey))
     this.setState({ pair: null })
   }
 
@@ -116,7 +150,6 @@ class Auth extends React.Component {
                 disabledButton={this.disabledButton()}
               />
             </Paper>
-            <button onClick={this.generateKeyPair}>Generate Key Pair</button>
           </Tab>
           <Tab label="Sign Up" value="signUp">
             <Paper className={styles.paper}>

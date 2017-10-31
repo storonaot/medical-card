@@ -1,6 +1,7 @@
 const webpack = require('webpack')
 const path = require('path')
 const StyleLintPlugin = require('stylelint-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   context: path.join(__dirname, 'frontend'),
@@ -22,8 +23,8 @@ module.exports = {
           path.resolve(__dirname, 'node_modules')
         ],
         use: [
-          'babel-loader',
-          'eslint-loader'
+          'babel-loader'
+          // 'eslint-loader'
         ]
       },
       {
@@ -106,6 +107,9 @@ module.exports = {
     new StyleLintPlugin({
       configFile: './.stylelintrc',
       syntax: 'sugarss'
+    }),
+    new HtmlWebpackPlugin({
+      template: '../index.html'
     })
   ],
   devServer: {
@@ -116,12 +120,12 @@ module.exports = {
     port: 8080,
     // contentBase: path.join(__dirname, 'public'),
     // historyApiFallback: true,
-    historyApiFallback: {
-      index: 'index.html'
-    },
-    allowedHosts: [
-      'http://127.0.0.1:3000'
-    ],
+    // historyApiFallback: {
+    //   index: 'index.html'
+    // },
+    // allowedHosts: [
+    //   'http://127.0.0.1:3000'
+    // ],
     hot: true
   }
 }

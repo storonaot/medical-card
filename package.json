@@ -1,12 +1,16 @@
 {
-  "name": "diploma",
+  "name": "medical-card",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "electron-starter.js",
+  "homepage": "./",
   "scripts": {
-    "start": "electron .",
+    "dev" : "nf start",
+    "start": "webpack-dev-server --inline --hot",
+    "electron": "electron .",
     "test": "xo",
-    "build": "electron-packager . $npm_package_publishName --all --version=$npm_package_electronVersion --app-version=$npm_package_version --out=dist --ignore=dist --prune"
+    "build": "electron-packager . $npm_package_publishName --all --version=$npm_package_electronVersion --app-version=$npm_package_version --out=dist --ignore=dist --prune",
+    "electron-dev": "set ELECTRON_START_URL=http://localhost:8080 && electron ."
   },
   "author": "",
   "license": "",
