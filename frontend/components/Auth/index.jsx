@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { createNewUser, authUser } from 'store/actions'
+import { createNewUser, authUser, updateUser } from 'store/actions'
 import Paper from 'material-ui/Paper'
 import { Tabs, Tab } from 'material-ui/Tabs'
 import Snackbar from 'material-ui/Snackbar'
@@ -12,6 +12,7 @@ import styles from './styles'
 
 const electron = window.require('electron')
 const fs = electron.remote.require('fs')
+
 // const ipcRenderer = electron.ipcRenderer
 
 // const PassPhrase = 'The Moon is a Harsh Mistress.'
@@ -123,13 +124,21 @@ class Auth extends React.Component {
     const { passPhrase } = this.state[currentTab]
     const bits = 1024
     const userRSAkey = cryptico.generateRSAKey(passPhrase, bits)
-    // const userPubKey = cryptico.publicKeyString(userRSAkey)
+    const userPubKey = cryptico.publicKeyString(userRSAkey)
+    console.log('userPubKey', userPubKey)
     // const plainText = 'Matt, I need you to help me with my Starcraft strategy.'
     // const encryptionResult = cryptico.encrypt(plainText, userPubKey)
     // const cipherText = encryptionResult.cipher
     // const DecryptionResult = cryptico.decrypt(cipherText, userRSAkey)
     createFile(uid, JSON.stringify(userRSAkey))
     this.setState({ pair: null })
+
+    this.setAppPubKey(uid, userPubKey)
+  }
+
+  setAppPubKey(uid, userPubKey) {
+    console.log('setAppPubKey')
+    this.props.onUpdateUser(uid, { appPubKey: userPubKey })
   }
 
   render() {
@@ -184,7 +193,10 @@ export default connect(
     ),
     onAuthUser: data => (
       dispatch(authUser(data))
-    )
+    ),
+    onUpdateUser: (uid, data) => {
+      dispatch(updateUser(uid, data))
+    }
   })
 )(Auth)
 

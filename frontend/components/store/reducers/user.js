@@ -8,6 +8,11 @@ export default function user(state = defaultState, action) {
       return action.payload
     case 'DESTROY_USER':
       return null
+    case 'UPDATE_USER':
+      return {
+        ...state,
+        ...action.payload
+      }
     default:
       return state
   }
