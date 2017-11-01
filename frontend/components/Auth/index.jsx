@@ -5,7 +5,7 @@ import { Tabs, Tab } from 'material-ui/Tabs'
 import Snackbar from 'material-ui/Snackbar'
 import { hasEmptyValues } from 'helpers'
 import path from 'path'
-import cryptico from 'cryptico-js'
+import { pki } from 'node-forge'
 import SignIn from './SignIn'
 import SignUp from './SignUp'
 import styles from './styles'
@@ -13,44 +13,17 @@ import styles from './styles'
 const electron = window.require('electron')
 const fs = electron.remote.require('fs')
 
-// const ipcRenderer = electron.ipcRenderer
-
-// const PassPhrase = 'The Moon is a Harsh Mistress.'
-// const Bits = 1024
-// const MattsRSAkey = cryptico.generateRSAKey(PassPhrase, Bits)
-// console.log('MattsRSAkey', MattsRSAkey)
-// const MattsPublicKeyString = cryptico.publicKeyString(MattsRSAkey)
-//
-// const PlainText = 'Matt, I need you to help me with my Starcraft strategy.'
-// const EncryptionResult = cryptico.encrypt(PlainText, MattsPublicKeyString)
-// console.log('EncryptionResult', EncryptionResult)
-//
-// const cipherText = EncryptionResult.cipher
-//
-// const DecryptionResult = cryptico.decrypt(cipherText, MattsRSAkey)
-//
-// console.log('DecryptionResult', DecryptionResult)
-
-console.log((electron.app || electron.remote.app).getPath('userData'))
-
-const createFile = (uid, fileContent) => {
-  console.log('createFile')
-
+const createFile = (uid, fileContent, cb) => {
   const userDataPath = (electron.app || electron.remote.app).getPath('userData')
-  const filepath = path.join(userDataPath, `keys_${uid}.json`)
+  const filepath = path.join(userDataPath, `keys_${uid}.txt`)
 
-  fs.writeFile(filepath, fileContent, (err) => {
-    if (err) throw err
-
-    console.log('The file was succesfully saved!')
-  })
+  fs.writeFile(filepath, fileContent, cb)
 }
 
 class Auth extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      pair: null,
       snackbarShow: false,
       snackbarMsg: '',
       currentTab: 'signIn', // signIn, signUp
@@ -63,13 +36,37 @@ class Auth extends React.Component {
         passPhrase: '',
         passPhraseRepeat: '',
         isDoctor: false
-      }
+      },
+      loadingData: false
     }
 
     this.updateStateValue = this.updateStateValue.bind(this)
     this.auth = this.auth.bind(this)
 
     this.generateKeyPair = this.generateKeyPair.bind(this)
+    this.createFileCallback = this.createFileCallback.bind(this)
+  }
+
+  setAppPubKey(uid, userPubKey) {
+    this.props.onUpdateUser(uid, { appPubKey: userPubKey })
+  }
+
+  createFileCallback(error) {
+    if (error) {
+      // Если не удалось создать файл с ключами,
+      // удаляем свежесозданный аккаунт юзера
+      const user = firebase.auth().currentUser
+      user.delete().then((responce) => {
+        console.log('DELETE USER', responce)
+      }, (err) => {
+        console.log('DELETE USER', err)
+      })
+    }
+    this.setState(
+      { loadingData: false },
+      () => { this.props.router.push(`profile/${this.props.user.uid}`) }
+    )
+    console.log('File CREATED')
   }
 
   changeTab(currentTab) {
@@ -84,7 +81,7 @@ class Auth extends React.Component {
 
   disabledButton() {
     const { currentTab } = this.state
-    return hasEmptyValues(this.state[currentTab]) || !this.passMatch()
+    return hasEmptyValues(this.state[currentTab]) || !this.passMatch() || this.state.loadingData
   }
 
   showSnack(msg) {
@@ -93,12 +90,12 @@ class Auth extends React.Component {
 
   auth() {
     const { currentTab } = this.state
+    this.setState({ loadingData: true })
     if (currentTab === 'signUp') {
       this.props.onCreateNewUser(this.state[currentTab]).then((responce) => {
         if (responce.type === 'error') this.showSnack(responce.error.message)
         else {
           this.generateKeyPair(responce.uid)
-          this.props.router.push(`profile/${responce.uid}`)
         }
       })
     } else if (currentTab === 'signIn') {
@@ -119,26 +116,25 @@ class Auth extends React.Component {
   }
 
   generateKeyPair(uid) {
-    console.log('generateKeyPair')
-    const { currentTab } = this.state
-    const { passPhrase } = this.state[currentTab]
-    const bits = 1024
-    const userRSAkey = cryptico.generateRSAKey(passPhrase, bits)
-    const userPubKey = cryptico.publicKeyString(userRSAkey)
-    console.log('userPubKey', userPubKey)
-    // const plainText = 'Matt, I need you to help me with my Starcraft strategy.'
-    // const encryptionResult = cryptico.encrypt(plainText, userPubKey)
-    // const cipherText = encryptionResult.cipher
-    // const DecryptionResult = cryptico.decrypt(cipherText, userRSAkey)
-    createFile(uid, JSON.stringify(userRSAkey))
-    this.setState({ pair: null })
+    const keyPair = pki.rsa.generateKeyPair({ bits: 2048, e: 0x10001 })
 
-    this.setAppPubKey(uid, userPubKey)
-  }
+    const publicKeyPem = pki.publicKeyToPem(keyPair.publicKey)
+    const privateKeyPem = pki.privateKeyToPem(keyPair.privateKey)
 
-  setAppPubKey(uid, userPubKey) {
-    console.log('setAppPubKey')
-    this.props.onUpdateUser(uid, { appPubKey: userPubKey })
+    const rsaKeys = {
+      publicKey: publicKeyPem,
+      privateKey: privateKeyPem
+    }
+
+    // console.log('publicKeyPem', publicKeyPem)
+    // console.log('privateKeyPem', privateKeyPem)
+    //
+    // const publicKey = pki.publicKeyFromPem(publicKeyPem)
+    // const privateKey = pki.privateKeyFromPem(privateKeyPem)
+
+    // createFile(uid, JSON.stringify(rsaKeys))
+    this.setAppPubKey(uid, JSON.stringify(publicKeyPem))
+    createFile(uid, JSON.stringify(rsaKeys), this.createFileCallback)
   }
 
   render() {
@@ -200,10 +196,18 @@ export default connect(
   })
 )(Auth)
 
+Auth.defaultProps = {
+  user: null
+}
+
 Auth.propTypes = {
+  onUpdateUser: PropTypes.func.isRequired,
   onCreateNewUser: PropTypes.func.isRequired,
   onAuthUser: PropTypes.func.isRequired,
   router: PropTypes.shape({
     push: PropTypes.func
-  }).isRequired
+  }).isRequired,
+  user: PropTypes.shape({
+    uid: PropTypes.string
+  })
 }

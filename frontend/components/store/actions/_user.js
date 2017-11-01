@@ -64,8 +64,7 @@ export const registerUserInApp = data => (dispatch) => {
 }
 
 export const updateUser = (uid, data) => (dispatch) => {
-  firebase.database().ref(`users/${uid}`).update(data).then((responce) => {
-    console.log('updateUser', responce)
+  firebase.database().ref(`users/${uid}`).update(data).then(() => {
     dispatch({
       type: 'UPDATE_USER',
       payload: data
