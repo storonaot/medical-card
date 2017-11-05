@@ -3,12 +3,12 @@ import firebase from 'libs/firebase'
 const getPayloadata = responce => ({
   email: responce.email,
   emailVerified: responce.emailVerified,
-  uid: responce.uid,
-  firstName: null,
-  lastName: null,
-  dateOfBirth: null,
-  photo: null,
-  city: null
+  uid: responce.uid
+  // firstName: null,
+  // lastName: null,
+  // dateOfBirth: null,
+  // photo: null,
+  // city: null
 })
 
 export const destroyUser = () => (dispatch) => {
@@ -17,11 +17,6 @@ export const destroyUser = () => (dispatch) => {
   }, (error) => {
     console.error('destroyUser error', error)
   })
-  // firebase.auth().signOut().then(function() {
-  //   // Sign-out successful.
-  // }).catch(function(error) {
-  //   // An error happened.
-  // })
 }
 
 export const createNewUser = data => (dispatch) => {

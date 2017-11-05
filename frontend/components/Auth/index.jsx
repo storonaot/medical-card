@@ -79,7 +79,7 @@ class Auth extends React.Component {
     }
     this.setState(
       { loadingData: false },
-      () => { this.props.router.push(`profile/${this.props.user.uid}`) }
+      () => { this.props.router.push('profile') }
     )
     console.log('File CREATED')
   }
@@ -109,16 +109,20 @@ class Auth extends React.Component {
     if (currentTab === 'signUp') {
       this.props.onCreateNewUser(this.state[currentTab]).then((responce) => {
         if (responce.type === 'error') this.showSnack(responce.error.message)
-        else {
-          this.generateKeyPair(responce.uid)
-        }
+        else this.generateKeyPair(responce.uid)
       })
     } else if (currentTab === 'signIn') {
       this.props.onAuthUser(this.state[currentTab]).then((responce) => {
         if (responce.type === 'error') this.showSnack(responce.error.message)
-        else this.props.router.push(`profile/${responce.uid}`)
+        else this.props.router.push('profile')
       })
     }
+  }
+
+  unlockEthAccount(address) {
+    const { currentTab } = this.state
+    const { passPhrase } = currentTab
+    web3.eth.personal.unlockAccount(address, passPhrase)
   }
 
   updateStateValue(name, value) {
@@ -229,6 +233,7 @@ Auth.propTypes = {
     push: PropTypes.func
   }).isRequired,
   user: PropTypes.shape({
-    uid: PropTypes.string
+    uid: PropTypes.string,
+    ethPubKey: PropTypes.string
   })
 }

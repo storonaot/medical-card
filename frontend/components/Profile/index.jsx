@@ -1,4 +1,5 @@
 import { connect } from 'react-redux'
+
 // import path from 'path'
 import DoctorProfile from './Doctor'
 import PatientProfile from './Patient'
@@ -16,15 +17,22 @@ class Profile extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      RSAKeys: null
+      RSAKeys: null,
+      perms: null
     }
   }
 
   render() {
     const { user } = this.props
     if (user) {
-      if (user.isDoctor) return (<DoctorProfile />)
-      return <PatientProfile />
+      if (user.isDoctor) {
+        return (
+          <DoctorProfile router={this.props.router} user={user} />
+        )
+      }
+      return (
+        <PatientProfile user={user} />
+      )
     }
     return (<div>Loading...</div>)
   }
@@ -42,5 +50,8 @@ Profile.defaultProps = {
 }
 
 Profile.propTypes = {
-  user: PropTypes.shape({})
+  user: PropTypes.shape({
+    uid: PropTypes.string
+  }),
+  router: PropTypes.shape({}).isRequired
 }
