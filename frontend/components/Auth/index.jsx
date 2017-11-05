@@ -1,14 +1,25 @@
 import { connect } from 'react-redux'
 import { createNewUser, authUser, updateUser } from 'store/actions'
+import firebase from 'libs/firebase'
 import Paper from 'material-ui/Paper'
 import { Tabs, Tab } from 'material-ui/Tabs'
 import Snackbar from 'material-ui/Snackbar'
 import { hasEmptyValues } from 'helpers'
 import path from 'path'
+import Web3 from 'web3'
 import { pki } from 'node-forge'
 import SignIn from './SignIn'
 import SignUp from './SignUp'
 import styles from './styles'
+
+let web3
+
+if (typeof web3 !== 'undefined') {
+  web3 = new Web3(web3.currentProvider)
+} else {
+  // set the provider you want from Web3.providers
+  web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
+}
 
 const electron = window.require('electron')
 const fs = electron.remote.require('fs')
@@ -49,6 +60,10 @@ class Auth extends React.Component {
 
   setAppPubKey(uid, userPubKey) {
     this.props.onUpdateUser(uid, { appPubKey: userPubKey })
+  }
+
+  setEthPubKey(uid, ethPubKey) {
+    this.props.onUpdateUser(uid, { ethPubKey })
   }
 
   createFileCallback(error) {
@@ -116,7 +131,9 @@ class Auth extends React.Component {
   }
 
   generateKeyPair(uid) {
-    const keyPair = pki.rsa.generateKeyPair({ bits: 2048, e: 0x10001 })
+    const keyPair = pki.rsa.generateKeyPair({ bits: 256, e: 0x10001 })
+
+    const hexPub = pki.getPublicKeyFingerprint(keyPair.publicKey, { encoding: 'hex' })
 
     const publicKeyPem = pki.publicKeyToPem(keyPair.publicKey)
     const privateKeyPem = pki.privateKeyToPem(keyPair.privateKey)
@@ -126,15 +143,19 @@ class Auth extends React.Component {
       privateKey: privateKeyPem
     }
 
-    // console.log('publicKeyPem', publicKeyPem)
-    // console.log('privateKeyPem', privateKeyPem)
-    //
-    // const publicKey = pki.publicKeyFromPem(publicKeyPem)
-    // const privateKey = pki.privateKeyFromPem(privateKeyPem)
-
-    // createFile(uid, JSON.stringify(rsaKeys))
-    this.setAppPubKey(uid, JSON.stringify(publicKeyPem))
+    this.setAppPubKey(uid, hexPub)
     createFile(uid, JSON.stringify(rsaKeys), this.createFileCallback)
+    this.createEthAccount(uid)
+  }
+
+  createEthAccount(uid) {
+    web3.eth.personal.newAccount(
+      this.state[this.state.currentTab].passPhrase,
+      (err, res) => {
+        if (err) throw err
+        this.setEthPubKey(uid, res)
+      }
+    )
   }
 
   render() {
