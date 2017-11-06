@@ -27,20 +27,26 @@ module.exports = {
           // 'eslint-loader'
         ]
       },
-      {
-        test: /\.css$/,
-        include: [
-          path.resolve(__dirname, 'node_modules/css-wipe'),
-        ],
-        use: [
-          'style-loader',
-          'css-loader'
-        ]
-      },
+      // {
+      //   test: /\.css$/,
+      //   include: [
+      //     path.resolve(__dirname, 'node_modules/css-wipe'),
+      //   ],
+      //   exclude: [
+      //     path.resolve(__dirname, 'react-flexbox-grid')
+      //   ],
+      //   use: [
+      //     'style-loader',
+      //     'css-loader'
+      //   ]
+      // },
       // {
       //   test: /\.css$/,
       //   exclude: [
       //     path.resolve(__dirname, 'node_modules/css-wipe'),
+      //   ],
+      //   include: [
+      //     path.resolve(__dirname, 'react-flexbox-grid')
       //   ],
       //   use: [
       //     'style-loader',
@@ -54,6 +60,55 @@ module.exports = {
       //     }
       //   ]
       // },
+      // {
+      //   test: /\.sss/,
+      //   use: [
+      //     'style-loader',
+      //     {
+      //       loader: 'css-loader',
+      //       options: {
+      //         importLoaders: 1,
+      //         modules: true,
+      //         localIdentName: '[name]__[local]___[hash:base64:5]'
+      //       }
+      //     },
+      //     {
+      //       loader: 'postcss-loader',
+      //       options: {
+      //         config: {
+      //           path: './postcss.config.js'
+      //         }
+      //       }
+      //     }
+      //   ]
+      // },
+      {
+        test: /\.css$/,
+        include: [
+          path.resolve(__dirname, 'node_modules/css-wipe'),
+        ],
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
+      },
+      {
+        test: /\.css$/,
+        exclude: [
+          path.resolve(__dirname, 'node_modules/css-wipe'),
+        ],
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: true,
+              localIdentName: '[name]__[local]___[hash:base64:5]'
+            }
+          }
+        ]
+      },
       {
         test: /\.sss/,
         use: [

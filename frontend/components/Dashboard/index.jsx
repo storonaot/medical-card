@@ -13,7 +13,7 @@ import PatientProfile from './Patient'
 //   fs.readFile(filepath, 'utf8', cb)
 // }
 
-class Profile extends React.Component {
+class Dashboard extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -43,13 +43,13 @@ export default connect(
     user: state.user,
     ownProps
   })
-)(Profile)
+)(Dashboard)
 
-Profile.defaultProps = {
+Dashboard.defaultProps = {
   user: null
 }
 
-Profile.propTypes = {
+Dashboard.propTypes = {
   user: PropTypes.shape({
     uid: PropTypes.string
   }),

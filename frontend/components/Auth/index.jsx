@@ -12,6 +12,8 @@ import SignIn from './SignIn'
 import SignUp from './SignUp'
 import styles from './styles'
 
+// const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8546')
+
 let web3
 
 if (typeof web3 !== 'undefined') {
@@ -79,7 +81,7 @@ class Auth extends React.Component {
     }
     this.setState(
       { loadingData: false },
-      () => { this.props.router.push('profile') }
+      () => { this.props.router.push('dashboard') }
     )
     console.log('File CREATED')
   }
@@ -114,7 +116,7 @@ class Auth extends React.Component {
     } else if (currentTab === 'signIn') {
       this.props.onAuthUser(this.state[currentTab]).then((responce) => {
         if (responce.type === 'error') this.showSnack(responce.error.message)
-        else this.props.router.push('profile')
+        else this.props.router.push('dashboard')
       })
     }
   }

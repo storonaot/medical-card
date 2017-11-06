@@ -121,7 +121,7 @@ class PermissionRequest extends React.Component {
           secondary
           label="Go to dashboard"
           style={{ marginBottom: '20px' }}
-          onClick={() => { this.props.router.push('profile') }}
+          onClick={() => { this.props.router.push('dashboard') }}
         />
         <Paper style={{ marginBottom: '20px' }}>
           <div className={styles.formWrapper}>
