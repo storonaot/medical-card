@@ -156,7 +156,8 @@ module.exports = {
     new webpack.ProvidePlugin({
       React: 'react',
       _: 'lodash',
-      PropTypes: 'prop-types'
+      PropTypes: 'prop-types',
+      axios: 'axios'
     }),
     new webpack.NoEmitOnErrorsPlugin(),
     new StyleLintPlugin({
@@ -169,9 +170,9 @@ module.exports = {
   ],
   devServer: {
     host: 'localhost',
-    // proxy: {
-    //   '*': 'http://127.0.0.1:3000'
-    // },
+    proxy: {
+      '*': 'http://127.0.0.1:3000'
+    },
     port: 8080,
     // contentBase: path.join(__dirname, 'public'),
     // historyApiFallback: true,

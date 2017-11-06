@@ -9,7 +9,9 @@ const url = require('url')
 let mainWindow
 
 function createWindow () {
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow({ width: 800, height: 600 })
+
+  // const mainSession = mainWindow.webContents.session
 
   const startUrl = process.env.ELECTRON_START_URL || url.format({
             pathname: path.join(__dirname, './public/bundles/index.html'),
@@ -17,6 +19,12 @@ function createWindow () {
             slashes: true
         });
   mainWindow.loadURL(startUrl);
+
+  // mainSession.cookies.set({ value: { user: null }, name: 'MedicalCard' }, (error) => {
+  //   mainSession.cookies.get({ name: 'MedicalCard' }, (error, cookies) => {
+  //     console.log('cookies', cookies)
+  //   })
+  // })
 
   mainWindow.on('closed', function () {
     mainWindow = null

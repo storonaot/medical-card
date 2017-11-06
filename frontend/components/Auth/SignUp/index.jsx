@@ -6,6 +6,12 @@ import styles from '../styles'
 const SignUp = ({ data, updateValue, signUp, disabledButton }) => (
   <div className={styles.controlsWrapper}>
     <TextField
+      floatingLabelText="Login"
+      fullWidth
+      onChange={(e) => { updateValue('login', e.target.value) }}
+      value={data.login}
+    />
+    <TextField
       floatingLabelText="Email"
       fullWidth
       onChange={(e) => { updateValue('email', e.target.value) }}

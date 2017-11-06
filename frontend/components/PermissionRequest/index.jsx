@@ -2,7 +2,7 @@ import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 import { Paper } from '_shared'
 import { connect } from 'react-redux'
-import firebase from 'libs/firebase'
+// import firebase from 'libs/firebase'
 import { forIn as _forIn } from 'lodash'
 import Snackbar from 'material-ui/Snackbar'
 import ResultsTable from './ResultsTable'
@@ -32,72 +32,72 @@ class PermissionRequest extends React.Component {
   }
 
   searchPatient() {
-    const email = this.state.search
-    firebase.database()
-      .ref('users')
-      .orderByChild('email')
-      .equalTo(email)
-      .once('value', (snap) => {
-        if (snap.val()) {
-          _forIn(snap.val(), (value) => {
-            this.checkExistedPermissions(value)
-            // this.setState({ results: value }, () => { this.checkExistedPermissions(value) })
-          })
-        } else {
-          this.setState({ results: 'empty' })
-        }
-      })
+    // const email = this.state.search
+    // firebase.database()
+    //   .ref('users')
+    //   .orderByChild('email')
+    //   .equalTo(email)
+    //   .once('value', (snap) => {
+    //     if (snap.val()) {
+    //       _forIn(snap.val(), (value) => {
+    //         this.checkExistedPermissions(value)
+    //         // this.setState({ results: value }, () => { this.checkExistedPermissions(value) })
+    //       })
+    //     } else {
+    //       this.setState({ results: 'empty' })
+    //     }
+    //   })
   }
 
   // storonaot@gmail.com
 
   checkExistedPermissions(value) {
-    const patientId = value.uid
-    const doctorId = this.props.user.uid
-    if (value.personalInfo) {
-      firebase.database()
-        .ref('permsRequests')
-        .once('value', (snap) => {
-          if (snap.val() === null) {
-            this.setState({ results: { ...value, requestExist: false } })
-          } else {
-            // проверяем был ли до этого уже оправлен запрос
-            // на доступ этому пациенту
-            firebase.database()
-              .ref('permsRequests')
-              .orderByChild('from')
-              .equalTo(doctorId)
-              .once('value', (snp) => {
-                _forIn(snp.val(), (val) => {
-                  if (val.to === patientId) {
-                    this.setState({ results: { ...value, requestExist: true } })
-                  } else {
-                    this.setState({ results: { ...value, requestExist: false } })
-                  }
-                })
-              })
-          }
-        })
-    } else {
-      this.setState({ results: 'empty' })
-    }
+    // const patientId = value.uid
+    // const doctorId = this.props.user.uid
+    // if (value.personalInfo) {
+    //   firebase.database()
+    //     .ref('permsRequests')
+    //     .once('value', (snap) => {
+    //       if (snap.val() === null) {
+    //         this.setState({ results: { ...value, requestExist: false } })
+    //       } else {
+    //         // проверяем был ли до этого уже оправлен запрос
+    //         // на доступ этому пациенту
+    //         firebase.database()
+    //           .ref('permsRequests')
+    //           .orderByChild('from')
+    //           .equalTo(doctorId)
+    //           .once('value', (snp) => {
+    //             _forIn(snp.val(), (val) => {
+    //               if (val.to === patientId) {
+    //                 this.setState({ results: { ...value, requestExist: true } })
+    //               } else {
+    //                 this.setState({ results: { ...value, requestExist: false } })
+    //               }
+    //             })
+    //           })
+    //       }
+    //     })
+    // } else {
+    //   this.setState({ results: 'empty' })
+    // }
   }
 
   sendPermissionRequest() {
-    const { firstName, lastName } = this.state.results.personalInfo
-    const doctor = this.props.user.personalInfo
-    const newPermissionKey = firebase.database().ref('permsRequests').push().key
-    firebase.database()
-      .ref(`permsRequests/${newPermissionKey}`)
-      .set({
-        to: this.state.results.uid,
-        from: this.props.user.uid,
-        toName: `${firstName} ${lastName}`,
-        fromName: doctor ? `${doctor.lastName} ${doctor.firstName} ${doctor.specialisation}` : 'No name',
-        status: 'pending'
-      })
-    this.setState({ search: '', results: null })
-    this.showSnack('Запрос отправлен')
+    // const { firstName, lastName } = this.state.results.personalInfo
+    // const doctor = this.props.user.personalInfo
+    // const newPermissionKey = firebase.database().ref('permsRequests').push().key
+    // firebase.database()
+    //   .ref(`permsRequests/${newPermissionKey}`)
+    //   .set({
+    //     to: this.state.results.uid,
+    //     from: this.props.user.uid,
+    //     toName: `${firstName} ${lastName}`,
+    //     fromName: doctor ? `${doctor.lastName} ${doctor.firstName} ${doctor.specialisation}` : 'No name',
+    //     status: 'pending'
+    //   })
+    // this.setState({ search: '', results: null })
+    // this.showSnack('Запрос отправлен')
   }
 
   render() {

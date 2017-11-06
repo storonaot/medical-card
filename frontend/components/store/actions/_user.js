@@ -1,4 +1,4 @@
-import firebase from 'libs/firebase'
+// import firebase from 'libs/firebase'
 
 const getPayloadata = responce => ({
   email: responce.email,
@@ -12,43 +12,43 @@ const getPayloadata = responce => ({
 })
 
 export const destroyUser = () => (dispatch) => {
-  firebase.auth().signOut().then(() => {
-    dispatch({ type: 'DESTROY_USER' })
-  }, (error) => {
-    console.error('destroyUser error', error)
-  })
+  // firebase.auth().signOut().then(() => {
+  //   dispatch({ type: 'DESTROY_USER' })
+  // }, (error) => {
+  //   console.error('destroyUser error', error)
+  // })
 }
 
 export const createNewUser = data => (dispatch) => {
-  const { email, passPhrase, isDoctor } = data
-  return firebase.auth().createUserWithEmailAndPassword(email, passPhrase)
-    .then((responce) => {
-      const payloadData = {
-        ...getPayloadata(responce),
-        isDoctor
-      }
-      dispatch({
-        type: 'CREATE_NEW_USER',
-        payload: payloadData
-      })
-      firebase.database().ref(`users/${responce.uid}`).set(payloadData)
-      return { type: 'success', uid: responce.uid }
-    }, error => ({ type: 'error', error }))
+  // const { email, passPhrase, isDoctor } = data
+  // return firebase.auth().createUserWithEmailAndPassword(email, passPhrase)
+  //   .then((responce) => {
+  //     const payloadData = {
+  //       ...getPayloadata(responce),
+  //       isDoctor
+  //     }
+  //     dispatch({
+  //       type: 'CREATE_NEW_USER',
+  //       payload: payloadData
+  //     })
+  //     firebase.database().ref(`users/${responce.uid}`).set(payloadData)
+  //     return { type: 'success', uid: responce.uid }
+  //   }, error => ({ type: 'error', error }))
 }
 
 export const authUser = data => (dispatch) => {
-  const { email, passPhrase } = data
-  return firebase.auth().signInWithEmailAndPassword(email, passPhrase)
-    .then((responce) => {
-      const userId = responce.uid
-      firebase.database().ref(`/users/${userId}`).once('value').then((snapshot) => {
-        dispatch({
-          type: 'AUTH_USER',
-          payload: snapshot.val()
-        })
-      })
-      return { type: 'success', uid: responce.uid }
-    }, error => ({ type: 'error', error }))
+  // const { email, passPhrase } = data
+  // return firebase.auth().signInWithEmailAndPassword(email, passPhrase)
+  //   .then((responce) => {
+  //     const userId = responce.uid
+  //     firebase.database().ref(`/users/${userId}`).once('value').then((snapshot) => {
+  //       dispatch({
+  //         type: 'AUTH_USER',
+  //         payload: snapshot.val()
+  //       })
+  //     })
+  //     return { type: 'success', uid: responce.uid }
+  //   }, error => ({ type: 'error', error }))
 }
 
 export const registerUserInApp = data => (dispatch) => {

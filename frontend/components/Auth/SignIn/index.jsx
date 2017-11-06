@@ -4,17 +4,11 @@ import styles from '../styles'
 
 const SignIn = ({ data, updateValue, signIn, disabledButton }) => (
   <div className={styles.controlsWrapper}>
-    {/* <TextField
+    <TextField
       floatingLabelText="Login"
       fullWidth
       onChange={(e) => { updateValue('login', e.target.value) }}
       value={data.login}
-    /> */}
-    <TextField
-      floatingLabelText="Email"
-      fullWidth
-      onChange={(e) => { updateValue('email', e.target.value) }}
-      value={data.email}
     />
     <TextField
       floatingLabelText="Pass Phrase"

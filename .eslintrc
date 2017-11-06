@@ -8,6 +8,7 @@
   },
   "extends": "airbnb",
   "rules": {
+    "no-useless-escape": 2,
     "semi": [2, "never"],
     "no-console": ["off", { allow: ["warn", "error"] }],
     "import/no-extraneous-dependencies": "off",
@@ -22,7 +23,7 @@
     "React": true,
     "_": true,
     "PropTypes": true,
-    "firebase": true
+    "axios": true
   },
   "env": {
     "browser": true
