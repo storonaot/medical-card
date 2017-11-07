@@ -1,26 +1,44 @@
 import { connect } from 'react-redux'
 // import { signOut } from 'store2/actions'
+import { Paper, Title } from '_shared'
+import RaisedButton from 'material-ui/RaisedButton'
 import DoctorDashboard from './Doctor'
 import PatientDashboard from './Patient'
+import styles from './styles'
 
 class Dashboard extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      emptyPersonalInfoText:
+        `Для продолжения работы с приложением необходимо заполнить
+        Персональную информацию`
+    }
   }
 
   render() {
-    const { user } = this.props
+    const { user, router } = this.props
     if (user.loading) return (<div>Loading...</div>)
     else if (user.errors) return (<div>Errors...</div>)
 
-    if (!user.data.profileInfo) return (<div>Бегом профиль заполнять</div>)
+    if (!user.data.personalInfo) {
+      return (
+        <Paper className={styles.emptyPersonalInfo}>
+          <Title text={this.state.emptyPersonalInfoText} />
+          <RaisedButton
+            secondary
+            label="Fill Personal Info"
+            onClick={() => { router.push('profile') }}
+          />
+        </Paper>
+      )
+    }
 
     if (user.data.isDoctor) {
       return (<DoctorDashboard router={this.props.router} user={user.data} />)
     }
 
-    return (<PatientDashboard user={user} />)
+    return (<PatientDashboard user={user.data} />)
   }
 }
 

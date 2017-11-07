@@ -1,4 +1,4 @@
-import { Header, Navbar } from '_shared'
+import { Header, Navbar, GoToDashboardBtn } from '_shared'
 import { connect } from 'react-redux'
 import { toggleSidebar, getUser, signOut } from 'store2/actions'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
@@ -39,7 +39,12 @@ class App extends React.Component {
   }
 
   render() {
-    const { children, sidebarOpened, user, onToggleSidebar } = this.props
+    const {
+      children, sidebarOpened, user,
+      onToggleSidebar, location, router
+    } = this.props
+
+    const email = user.data ? user.data.email : null
 
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
@@ -48,7 +53,7 @@ class App extends React.Component {
             toggleSidebar={onToggleSidebar}
             sidebarOpened={sidebarOpened}
             logged={!!user.data}
-            userName={null}
+            email={email}
             signOut={this.signOut}
             goTo={this.goTo}
           />
@@ -57,6 +62,10 @@ class App extends React.Component {
             clickAway={onToggleSidebar}
           />
           <div className={styles.content}>
+            <GoToDashboardBtn
+              path={location.pathname}
+              push={router.push}
+            />
             {children}
           </div>
         </div>
