@@ -9,6 +9,7 @@ import { syncHistoryWithStore } from 'react-router-redux'
 import App from 'App'
 import Auth from 'Auth'
 import Dashboard from 'Dashboard'
+import Profile from 'Profile'
 import Home from 'Home'
 import PermissionRequest from 'PermissionRequest'
 import { getCookie } from 'helpers'
@@ -34,6 +35,7 @@ render(
         <IndexRoute component={Home} />
         <Route path="auth" component={Auth} onEnter={isAutorized} />
         <Route path="dashboard" component={Dashboard} onEnter={notAutorized} />
+        <Route path="profile" component={Profile} onEnter={notAutorized} />
         <Route path="send-perm-req" component={PermissionRequest} onEnter={notAutorized} />
       </Route>
     </Router>

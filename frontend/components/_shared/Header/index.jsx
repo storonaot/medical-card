@@ -7,11 +7,9 @@ import { white } from 'material-ui/styles/colors'
 import NavigationClose from 'material-ui/svg-icons/navigation/close'
 import NavigationMenu from 'material-ui/svg-icons/navigation/menu'
 
-const Logged = ({ name, signOut }) => {
-  console.log('Logged', name)
-  return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <div style={{ color: '#fff' }}>{name}</div>
+const Logged = ({ email, signOut, logged, goTo }) => {
+  const iconMenu = logged
+    ? (
       <IconMenu
         iconButtonElement={
           <IconButton><MoreVertIcon color={white} /></IconButton>
@@ -19,22 +17,45 @@ const Logged = ({ name, signOut }) => {
         targetOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
       >
+        <MenuItem primaryText="Dashboard" onClick={() => { goTo('dashboard') }} />
+        <MenuItem primaryText="Profile" onClick={() => { goTo('profile') }} />
         <MenuItem primaryText="Sign out" onClick={signOut} />
       </IconMenu>
+    ) : (
+      <IconMenu
+        iconButtonElement={
+          <IconButton><MoreVertIcon color={white} /></IconButton>
+        }
+        targetOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+      >
+        <MenuItem primaryText="Sign in" onClick={() => { goTo('auth') }} />
+      </IconMenu>
+    )
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ color: '#fff' }}>{email}</div>
+      {iconMenu}
     </div>
   )
 }
 
 Logged.defaultProps = {
-  name: null
+  email: null
 }
 
 Logged.propTypes = {
-  name: PropTypes.string,
-  signOut: PropTypes.func.isRequired
+  email: PropTypes.string,
+  signOut: PropTypes.func.isRequired,
+  logged: PropTypes.bool.isRequired,
+  goTo: PropTypes.func.isRequired
 }
 
-const Header = ({ toggleSidebar, sidebarOpened, logged, userName, signOut }) => {
+const Header = ({
+  toggleSidebar, sidebarOpened, logged, email,
+  signOut, goTo
+}) => {
   const Close = () => (
     <IconButton onClick={toggleSidebar}>
       <NavigationClose color={white} />
@@ -56,7 +77,16 @@ const Header = ({ toggleSidebar, sidebarOpened, logged, userName, signOut }) => 
       title="MedicalCard"
       showMenuIconButton={logged}
       iconElementLeft={NavbarIcon()}
-      iconElementRight={logged ? <Logged signOut={signOut} name={userName} /> : null}
+      onTitleTouchTap={() => { goTo('/') }}
+      iconElementRight={
+        <Logged
+          signOut={signOut}
+          email={email}
+          logged={logged}
+          signIn={goTo}
+          goTo={goTo}
+        />
+      }
     />
   )
 }
@@ -65,13 +95,14 @@ export default Header
 
 Header.defaultProps = {
   logged: false,
-  userName: null
+  email: null
 }
 
 Header.propTypes = {
   toggleSidebar: PropTypes.func.isRequired,
   sidebarOpened: PropTypes.bool.isRequired,
   logged: PropTypes.bool,
-  userName: PropTypes.string,
-  signOut: PropTypes.func.isRequired
+  email: PropTypes.string,
+  signOut: PropTypes.func.isRequired,
+  goTo: PropTypes.func.isRequired
 }

@@ -5,14 +5,14 @@
 // import { Row, Col } from 'react-flexbox-grid'
 // import styles from '../styles'
 
-class DoctorProfile extends React.Component {
+class DoctorDashboard extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       permissions: []
     }
 
-    this.getPermReqForDoctor = this.getPermReqForDoctor.bind(this)
+    // this.getPermReqForDoctor = this.getPermReqForDoctor.bind(this)
   }
 
   render() {
@@ -54,7 +54,7 @@ class DoctorProfile extends React.Component {
   }
 }
 
-export default DoctorProfile
+export default DoctorDashboard
 
 // DoctorProfile.defaultProps = {
 //   perms: []

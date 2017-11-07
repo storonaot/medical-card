@@ -27,20 +27,12 @@ const setCookie = (name, value, options) => {
 
   let updatedCookie = `${name}=${val}`
 
-  _.fotIn(options, (propValue, key) => {
+  _.forIn(options, (propValue, key) => {
     updatedCookie += `;${key}`
     if (propValue !== true) {
       updatedCookie += `=${propValue}`
     }
   })
-
-  // for (const propName in options) {
-  //   updatedCookie += `;${propName}`
-  //   const propValue = options[propName]
-  //   if (propValue !== true) {
-  //     updatedCookie += `=${propValue}`
-  //   }
-  // }
 
   document.cookie = updatedCookie
 }

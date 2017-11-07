@@ -1,6 +1,6 @@
 import { Header, Navbar } from '_shared'
 import { connect } from 'react-redux'
-import { toggleSidebar, getUser } from 'store2/actions'
+import { toggleSidebar, getUser, signOut } from 'store2/actions'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 // const electron = window.require('electron')
@@ -13,6 +13,8 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {}
+    this.signOut = this.signOut.bind(this)
+    this.goTo = this.goTo.bind(this)
   }
 
   componentDidMount() {
@@ -27,21 +29,34 @@ class App extends React.Component {
     }
   }
 
+  goTo(path) {
+    const { router, location } = this.props
+    if (location.pathname !== `/${path}`) router.push(path)
+  }
+
+  signOut() {
+    this.props.onSignOut().then(() => { this.goTo('/') })
+  }
+
   render() {
-    const { children, sidebarOpened } = this.props
+    const { children, sidebarOpened, user, onToggleSidebar } = this.props
 
     return (
       <MuiThemeProvider muiTheme={muiTheme}>
         <div className={styles.app}>
           <Header
-            toggleSidebar={this.props.onToggleSidebar}
+            toggleSidebar={onToggleSidebar}
             sidebarOpened={sidebarOpened}
-            logged={false}
+            logged={!!user.data}
             userName={null}
-            signOut={() => {}}
+            signOut={this.signOut}
+            goTo={this.goTo}
+          />
+          <Navbar
+            sidebarOpened={sidebarOpened}
+            clickAway={onToggleSidebar}
           />
           <div className={styles.content}>
-            <Navbar sidebarOpened={sidebarOpened} />
             {children}
           </div>
         </div>
@@ -57,13 +72,10 @@ export default connect(
   }),
   dispatch => ({
     onToggleSidebar: () => { dispatch(toggleSidebar()) },
-    onGetUser: () => (dispatch(getUser()))
+    onGetUser: () => (dispatch(getUser())),
+    onSignOut: () => (dispatch(signOut()))
   })
 )(App)
-
-// App.defaultProps = {
-//   user: null
-// }
 
 App.propTypes = {
   user: PropTypes.shape({
@@ -75,6 +87,7 @@ App.propTypes = {
   ]).isRequired,
   sidebarOpened: PropTypes.bool.isRequired,
   onToggleSidebar: PropTypes.func.isRequired,
+  onSignOut: PropTypes.func.isRequired,
   router: PropTypes.shape({
     push: PropTypes.func
   }).isRequired,

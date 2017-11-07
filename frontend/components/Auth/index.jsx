@@ -13,7 +13,7 @@ class Auth extends React.Component {
     this.state = {
       snackbarShow: false,
       snackbarMsg: '',
-      currentTab: 'signUp', // signIn, signUp
+      currentTab: 'signIn', // signIn, signUp
       signIn: {
         login: '',
         passPhrase: ''

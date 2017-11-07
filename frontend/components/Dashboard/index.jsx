@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
-import { signOut } from 'store2/actions'
-import DoctorProfile from './Doctor'
-import PatientProfile from './Patient'
+// import { signOut } from 'store2/actions'
+import DoctorDashboard from './Doctor'
+import PatientDashboard from './Patient'
 
 class Dashboard extends React.Component {
   constructor(props) {
@@ -11,18 +11,16 @@ class Dashboard extends React.Component {
 
   render() {
     const { user } = this.props
-    if (user) {
-      if (user.isDoctor) {
-        return (<DoctorProfile router={this.props.router} user={user} />)
-      }
-      return (
-        <div>
-          <button onClick={this.props.onSignOut}>signOut</button>
-          <PatientProfile user={user} />
-        </div>
-      )
+    if (user.loading) return (<div>Loading...</div>)
+    else if (user.errors) return (<div>Errors...</div>)
+
+    if (!user.data.profileInfo) return (<div>Бегом профиль заполнять</div>)
+
+    if (user.data.isDoctor) {
+      return (<DoctorDashboard router={this.props.router} user={user.data} />)
     }
-    return (<div>Loading...</div>)
+
+    return (<PatientDashboard user={user} />)
   }
 }
 
@@ -30,10 +28,10 @@ export default connect(
   (state, ownProps) => ({
     user: state.user,
     ownProps
-  }),
-  dispatch => ({
-    onSignOut: () => { dispatch(signOut()) }
   })
+  // dispatch => ({
+  //   onSignOut: () => { dispatch(signOut()) }
+  // })
 )(Dashboard)
 
 Dashboard.defaultProps = {
@@ -44,6 +42,5 @@ Dashboard.propTypes = {
   user: PropTypes.shape({
     uid: PropTypes.string
   }),
-  router: PropTypes.shape({}).isRequired,
-  onSignOut: PropTypes.func.isRequired
+  router: PropTypes.shape({}).isRequired
 }

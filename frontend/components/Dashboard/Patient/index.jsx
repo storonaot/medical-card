@@ -1,7 +1,7 @@
 import { Paper } from '_shared'
 import styles from '../styles'
 
-const PatientProfile = ({ user }) => {
+const PatientDashboard = ({ user }) => {
   if (user.personalInfo) {
     return (
       <div className={styles.gridWrapper}>
@@ -14,8 +14,8 @@ const PatientProfile = ({ user }) => {
   return (<div>You must fill you Profile Info</div>)
 }
 
-export default PatientProfile
+export default PatientDashboard
 
-PatientProfile.propTypes = {
+PatientDashboard.propTypes = {
   user: PropTypes.shape({}).isRequired
 }
