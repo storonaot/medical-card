@@ -1,5 +1,5 @@
-// import firebase from './firebase'
-//
-// const test = ''
-//
-// export { firebase, test }
+import randomPhoto from './randomPhoto'
+
+const test = null
+
+export { test, randomPhoto }

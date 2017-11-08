@@ -1,7 +1,7 @@
 import RaisedButton from 'material-ui/RaisedButton'
 
 const GoToDashboardBtn = ({ path, push }) => {
-  if (path !== '/' && path !== '/dashboard' && path !== 'auth') {
+  if (path !== '/' && path !== '/dashboard' && path !== '/auth') {
     return (
       <RaisedButton
         label="Go to Dashboard"

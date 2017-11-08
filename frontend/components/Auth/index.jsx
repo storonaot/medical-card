@@ -3,6 +3,7 @@ import Snackbar from 'material-ui/Snackbar'
 import { connect } from 'react-redux'
 import { signUp, signIn } from 'store2/actions'
 import { Paper } from '_shared'
+import { randomPhoto } from 'libs'
 import styles from './styles'
 import SignIn from './SignIn'
 import SignUp from './SignUp'
@@ -49,7 +50,7 @@ class Auth extends React.Component {
 
   signUp() {
     const { login, email, passPhrase, isDoctor } = this.state.signUp
-    const data = { login, email, passPhrase, isDoctor }
+    const data = { login, email, passPhrase, isDoctor, photo: randomPhoto() }
     this.props.onSignUp(data).then((response) => {
       if (response.status === 200) this.props.router.push('/dashboard')
     })

@@ -72,4 +72,17 @@ const signOut = () => dispatch => (
   })
 )
 
-export { getUser, signIn, signUp, signOut }
+const sendPersonalInfo = (userId, data) => dispatch => (
+  axios.put(`/api/v1/user/personal-info/${userId}`, data).then((response) => {
+    dispatch({
+      type: 'UPDATE_USER',
+      payload: response.data
+    })
+    return response
+  }, (error) => {
+    console.log('sendPersonalInfo', error.response)
+    return error
+  })
+)
+
+export { getUser, signIn, signUp, signOut, sendPersonalInfo }

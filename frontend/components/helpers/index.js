@@ -1,9 +1,9 @@
 import { hasEmptyValues, tmp } from './objOperations'
-import { getDataFromLS, removeUserIdFromLS } from './localStore.js'
 import { setCookie, getCookie, deleteCookie } from './cookie'
+import createKeyFile from './createKeyFile'
 
 export {
   hasEmptyValues, tmp,
-  getDataFromLS, removeUserIdFromLS,
-  setCookie, getCookie, deleteCookie
+  setCookie, getCookie, deleteCookie,
+  createKeyFile
 }

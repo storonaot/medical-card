@@ -14,6 +14,8 @@ export default function user(state = defaultState, action) {
       return { loading: false, data: null, errors: action.payload }
     case 'USER_DESTROY':
       return { loading: true, data: null, errors: null }
+    case 'UPDATE_USER':
+      return { ...state, data: action.payload }
     default:
       return state
   }
