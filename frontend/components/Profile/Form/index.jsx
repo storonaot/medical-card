@@ -1,5 +1,7 @@
 import TextField from 'material-ui/TextField'
 import RaisedButton from 'material-ui/RaisedButton'
+import SelectField from 'material-ui/SelectField'
+import MenuItem from 'material-ui/MenuItem'
 import { Paper } from '_shared'
 import { Row, Col } from 'react-flexbox-grid'
 
@@ -45,13 +47,21 @@ const Form = ({
             />
           </Col>
           <Col xs={12} sm={4} md={4}>
-            <TextField
+            <SelectField
+              floatingLabelText="Frequency"
+              value={data.gender}
+              onChange={(event, index, value) => { updateValue('gender', value) }}
+            >
+              <MenuItem value="femail" primaryText="femail" />
+              <MenuItem value="mail" primaryText="mail" />
+            </SelectField>
+            {/* <TextField
               floatingLabelText="Gender"
               fullWidth
               onChange={(e) => { updateValue('gender', e.target.value) }}
               value={data.gender}
               disabled={disabledFields}
-            />
+            /> */}
           </Col>
         </Row>
         {specialisationField}

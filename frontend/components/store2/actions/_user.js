@@ -73,7 +73,7 @@ const signOut = () => dispatch => (
 )
 
 const sendPersonalInfo = (userId, data) => dispatch => (
-  axios.put(`/api/v1/user/personal-info/${userId}`, data).then((response) => {
+  axios.put(`/api/v1/user/${userId}`, data).then((response) => {
     dispatch({
       type: 'UPDATE_USER',
       payload: response.data

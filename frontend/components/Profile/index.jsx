@@ -1,19 +1,10 @@
 import { connect } from 'react-redux'
 import { sendPersonalInfo } from 'store2/actions'
 // import { createKeyFile } from 'helpers'
-import Web3 from 'web3'
+import { createEthAccount, createKeyFile } from 'helpers'
+// import Web3 from 'web3'
+
 import Form from './Form'
-
-let web3
-
-if (typeof web3 !== 'undefined') {
-  web3 = new Web3(web3.currentProvider)
-} else {
-  // set the provider you want from Web3.providers
-  web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
-}
-
-console.log('web3', web3)
 
 class Profile extends React.Component {
   constructor(props) {
@@ -22,30 +13,44 @@ class Profile extends React.Component {
       firstName: '',
       lastName: '',
       specialisation: '',
-      gender: ''
+      gender: 'femail',
+      ethAddress: null
     }
 
     this.updateValue = this.updateValue.bind(this)
     this.sendPersonalInfo = this.sendPersonalInfo.bind(this)
+    this.addPersonalInfo = this.addPersonalInfo.bind(this)
   }
 
   updateValue(name, value) {
     this.setState({ [name]: value })
   }
 
-  // createEthAccount() {
-  //
-  // }
+  addPersonalInfo() {
+    const userId = this.props.user._id
+    const fileContent = JSON.stringify(createEthAccount())
+    this.setState(
+      { ethAddress: createEthAccount().address },
+      () => { createKeyFile(userId, fileContent, this.sendPersonalInfo) }
+    )
+  }
 
   sendPersonalInfo() {
-    const { firstName, lastName, specialisation } = this.state
+    // TODO: - сделать проверку если вдруг файл создать не удалось
+    console.log('sendPersonalInfo', sendPersonalInfo)
     const { user, router } = this.props
+    const {
+      firstName, lastName, specialisation,
+      ethAddress, gender
+    } = this.state
     const userId = user._id
-    let personalInfo = { firstName, lastName }
+    let personalInfo = { firstName, lastName, gender }
+    const pubKey = { pubKey: ethAddress }
 
     if (user.isDoctor) personalInfo = { ...personalInfo, specialisation }
+    const resultObj = { personalInfo, ...pubKey }
 
-    this.props.onSendPersonalInfo(userId, personalInfo).then((response) => {
+    this.props.onSendPersonalInfo(userId, resultObj).then((response) => {
       if (response.data) router.push('dashboard')
       console.log('onSendPersonalInfo', response)
     })
@@ -67,7 +72,7 @@ class Profile extends React.Component {
         isDoctor={user.isDoctor}
         data={user.personalInfo || this.state}
         updateValue={this.updateValue}
-        sendPersonalInfo={this.sendPersonalInfo}
+        sendPersonalInfo={this.addPersonalInfo}
         disabledButton={this.disabledButton()}
         disabledFields={!!user.personalInfo}
       />
@@ -89,7 +94,9 @@ Profile.defaultProps = {
 }
 
 Profile.propTypes = {
-  user: PropTypes.shape({}),
+  user: PropTypes.shape({
+    _id: PropTypes.string
+  }),
   onSendPersonalInfo: PropTypes.func.isRequired,
   router: PropTypes.shape({}).isRequired
 }
