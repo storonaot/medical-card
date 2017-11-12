@@ -18,6 +18,7 @@ const Form = ({
             fullWidth
             onChange={(e) => { updateValue('specialisation', e.target.value) }}
             value={data.specialisation}
+            disabled={disabledFields}
           />
         </Col>
       </Row>
@@ -51,17 +52,11 @@ const Form = ({
               floatingLabelText="Frequency"
               value={data.gender}
               onChange={(event, index, value) => { updateValue('gender', value) }}
+              disabled={disabledFields}
             >
               <MenuItem value="femail" primaryText="femail" />
               <MenuItem value="mail" primaryText="mail" />
             </SelectField>
-            {/* <TextField
-              floatingLabelText="Gender"
-              fullWidth
-              onChange={(e) => { updateValue('gender', e.target.value) }}
-              value={data.gender}
-              disabled={disabledFields}
-            /> */}
           </Col>
         </Row>
         {specialisationField}

@@ -1,8 +1,13 @@
 import styles from './styles'
 
 const Avatar = ({ size, photo, style }) => {
-  const intSize = size === 'regular' ? 100 : 30
-  const styleDefault = { width: intSize, height: intSize, backgroundImage: `url(${photo})` }
+  const intSize = size === 'regular' ? 100 : 40
+  const styleDefault = {
+    width: intSize,
+    minWidth: intSize,
+    height: intSize,
+    backgroundImage: `url(${photo})`
+  }
 
   return (
     <div

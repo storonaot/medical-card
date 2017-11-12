@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import { sendPersonalInfo } from 'store2/actions'
 // import { createKeyFile } from 'helpers'
-import { createEthAccount, createKeyFile } from 'helpers'
+import { createEthAccount, createKeyFile, generateRSAKeyPair } from 'helpers'
 // import Web3 from 'web3'
 
 import Form from './Form'
@@ -14,41 +14,48 @@ class Profile extends React.Component {
       lastName: '',
       specialisation: '',
       gender: 'femail',
-      ethAddress: null
+      ethAddress: null,
+      publicPEM: null
     }
 
     this.updateValue = this.updateValue.bind(this)
     this.sendPersonalInfo = this.sendPersonalInfo.bind(this)
-    this.addPersonalInfo = this.addPersonalInfo.bind(this)
+    this.createEthAccount = this.createEthAccount.bind(this)
+    // this.addPersonalInfo = this.addPersonalInfo.bind(this)
   }
 
   updateValue(name, value) {
     this.setState({ [name]: value })
   }
 
-  addPersonalInfo() {
+  createEthAccount() {
     const userId = this.props.user._id
-    const fileContent = JSON.stringify(createEthAccount())
+    const ethAccountKeys = createEthAccount()
+    const pemRsaKeys = generateRSAKeyPair()
+    console.log('pemRsaKeys', pemRsaKeys.publicKey)
+    const fileContent = {
+      eth: ethAccountKeys,
+      pem: pemRsaKeys
+    }
     this.setState(
-      { ethAddress: createEthAccount().address },
-      () => { createKeyFile(userId, fileContent, this.sendPersonalInfo) }
+      { ethAddress: ethAccountKeys.address, publicPEM: pemRsaKeys.publicKey },
+      () => { createKeyFile(userId, JSON.stringify(fileContent), this.sendPersonalInfo) }
     )
   }
 
   sendPersonalInfo() {
     // TODO: - сделать проверку если вдруг файл создать не удалось
-    console.log('sendPersonalInfo', sendPersonalInfo)
+    console.log('sendPersonalInfo')
     const { user, router } = this.props
     const {
       firstName, lastName, specialisation,
-      ethAddress, gender
+      ethAddress, gender, publicPEM
     } = this.state
     const userId = user._id
     let personalInfo = { firstName, lastName, gender }
-    const pubKey = { pubKey: ethAddress }
 
     if (user.isDoctor) personalInfo = { ...personalInfo, specialisation }
-    const resultObj = { personalInfo, ...pubKey }
+    const resultObj = { personalInfo, ethAddress, publicPEM }
 
     this.props.onSendPersonalInfo(userId, resultObj).then((response) => {
       if (response.data) router.push('dashboard')
@@ -72,7 +79,7 @@ class Profile extends React.Component {
         isDoctor={user.isDoctor}
         data={user.personalInfo || this.state}
         updateValue={this.updateValue}
-        sendPersonalInfo={this.addPersonalInfo}
+        sendPersonalInfo={this.createEthAccount}
         disabledButton={this.disabledButton()}
         disabledFields={!!user.personalInfo}
       />

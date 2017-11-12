@@ -1,70 +1,58 @@
-// import { Paper } from '_shared'
-// import RaisedButton from 'material-ui/RaisedButton'
-// // import firebase from 'libs/firebase'
-// // import { forIn as _forIn } from 'lodash'
-// import { Row, Col } from 'react-flexbox-grid'
-// import styles from '../styles'
+import { Row, Col } from 'react-flexbox-grid'
+import { Paper, Title } from '_shared'
+import PersonalBlock from '../PersonalBlock'
+import PatientsList from './PatientsList'
+import PermReqList from './PermReqList'
 
-class DoctorDashboard extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      permissions: []
-    }
+const DoctorDashboard = ({ user, goToSendPermReq }) => {
+  const userData = [
+    { id: 1, title: 'Login', value: user.login },
+    { id: 2, title: 'First Name', value: user.personalInfo.firstName },
+    { id: 3, title: 'Last Name', value: user.personalInfo.lastName },
+    { id: 4, title: 'Gender', value: user.personalInfo.gender },
+    { id: 5, title: 'Email', value: user.email },
+    { id: 6, title: 'Specialisation', value: user.personalInfo.specialisation },
+    { id: 7, title: 'EthAddress', value: user.ethAddress }
+  ]
 
-    // this.getPermReqForDoctor = this.getPermReqForDoctor.bind(this)
-  }
-
-  render() {
-    return (<div>Doctor</div>)
-  //   if (this.props.user) {
-  //     return (
-  //       <div className={styles.wprapper}>
-  //         <RaisedButton
-  //           secondary
-  //           label="Send permission request"
-  //           style={{ marginBottom: '20px' }}
-  //           onClick={() => { this.props.router.push('send-perm-req') }}
-  //         />
-  //         <Row>
-  //           <Col md={6} style={{ height: '100%' }}>
-  //             <Paper className={styles.a}>My profile</Paper>
-  //           </Col>
-  //           <Col md={6}>
-  //             <Row>
-  //               <Col md={12} style={{ marginBottom: 20 }}>
-  //                 <Paper className={styles.b}>My Patients</Paper>
-  //               </Col>
-  //               <Col md={12}>
-  //                 <Paper className={styles.c}>
-  //                   <div>
-  //                     <div>My Permissions</div>
-  //                     {this.state.permissions
-  //                       .map(i => (<div key={i.to}>{i.toName} status: {i.status}</div>))}
-  //                   </div>
-  //                 </Paper>
-  //               </Col>
-  //             </Row>
-  //           </Col>
-  //         </Row>
-  //       </div>
-  //     )
-  //   }
-  //   return null
-  }
+  return (
+    <Row>
+      <Col md={6}>
+        <PersonalBlock
+          data={userData}
+          photo={user.photo}
+          isDoctor={user.isDoctor}
+        />
+      </Col>
+      <Col md={6}>
+        <Row>
+          <Col md={12} style={{ marginBottom: '1rem' }}>
+            <Paper>
+              <Title text="My Patients" />
+              <PatientsList
+                list={[]}
+                goToSendPermReq={goToSendPermReq}
+              />
+            </Paper>
+          </Col>
+          <Col md={12}>
+            <Paper>
+              <Title text="My Permissoin Requests" />
+              <PermReqList
+                list={[]}
+                goToSendPermReq={goToSendPermReq}
+              />
+            </Paper>
+          </Col>
+        </Row>
+      </Col>
+    </Row>
+  )
 }
 
 export default DoctorDashboard
 
-// DoctorProfile.defaultProps = {
-//   perms: []
-// }
-//
-// DoctorProfile.propTypes = {
-//   router: PropTypes.shape({
-//     push: PropTypes.func
-//   }).isRequired,
-//   user: PropTypes.shape({
-//     uid: PropTypes.string
-//   }).isRequired
-// }
+DoctorDashboard.propTypes = {
+  user: PropTypes.shape({}).isRequired,
+  goToSendPermReq: PropTypes.func.isRequired
+}

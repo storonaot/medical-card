@@ -3,14 +3,13 @@ import { Row, Col } from 'react-flexbox-grid'
 import PersonalBlock from '../PersonalBlock'
 
 const PatientDashboard = ({ user }) => {
-  console.log('user', user.photo)
   const userData = [
     { id: 1, title: 'Login', value: user.login },
     { id: 2, title: 'First Name', value: user.personalInfo.firstName },
     { id: 3, title: 'Last Name', value: user.personalInfo.lastName },
     { id: 4, title: 'Gender', value: user.personalInfo.gender },
     { id: 5, title: 'Email', value: user.email },
-    { id: 6, title: 'Public Key', value: user.pubKey }
+    { id: 6, title: 'EthAddress', value: user.ethAddress }
   ]
   return (
     <Row>
