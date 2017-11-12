@@ -80,7 +80,7 @@ const sendPersonalInfo = (userId, data) => dispatch => (
     })
     return response
   }, (error) => {
-    console.log('sendPersonalInfo', error.response)
+    console.error('sendPersonalInfo', error.response)
     return error
   })
 )

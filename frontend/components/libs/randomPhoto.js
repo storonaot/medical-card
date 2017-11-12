@@ -38,6 +38,5 @@ export default () => {
   const randomMulMaxMinusMin = Math.random() * (maxMinusMin + 1)
   const minMinusHalf = min - 0.5
   const rand = Math.round(minMinusHalf + randomMulMaxMinusMin)
-  console.log('rand', rand)
   return photos[rand]
 }

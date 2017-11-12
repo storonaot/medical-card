@@ -6,14 +6,14 @@ const PersonalBlock = ({ data, photo, isDoctor }) => {
   const medicalCardBtn = !isDoctor
     ? (
       <div style={{ textAlign: 'center', paddingTop: '20px' }}>
-        <RaisedButton secondary label={'Show my medical card'} />
+        <RaisedButton secondary label={'Подробнее'} />
       </div>
     )
     : null
 
   return (
     <Paper>
-      <Title text={isDoctor ? 'My Personal Info' : 'Medical Card'} />
+      <Title text={isDoctor ? 'Персональная информация' : 'Моя медицинская карта'} />
       <div className={styles.personalInfo}>
         <Avatar photo={photo} style={{ marginRight: '20px' }} />
         <div>

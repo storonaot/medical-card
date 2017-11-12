@@ -1,18 +1,30 @@
-import { List, ListItem } from 'material-ui/List'
+// import { List, ListItem } from 'material-ui/List'
 import RaisedButton from 'material-ui/RaisedButton'
-import { Avatar, Empty } from '_shared'
+import { Empty, List, ListItem } from '_shared'
+import styles from './styles'
 
-const PermReqList = ({ list, goToSendPermReq }) => {
+
+const PermReqList = ({ list, goToSendPermReq, showAll, deleteRequest }) => {
   if (!list.length) return (<Empty btnClick={goToSendPermReq} type="permReq" />)
   return (
-    <List>
-      <ListItem
-        leftAvatar={<Avatar size="small" photo="https://avatanplus.com/files/resources/mid/56f14fdc0d0351539e9ff395.png" />}
-        rightIcon={<RaisedButton secondary label="More" />}
-        primaryText="Irina Zhigalova"
-        secondaryText="storonaot"
-      />
-    </List>
+    <div>
+      <List style={{ marginBottom: '20px' }}>
+        {list.map((item) => {
+          if (item.status !== 'success') return (<ListItem deleteItem={deleteRequest} key={item._id} item={item} />)
+          return null
+        })}
+      </List>
+      <div className={styles.btnsWrapper}>
+        <RaisedButton onClick={goToSendPermReq} secondary label="Отправить запрос" />
+        <RaisedButton
+          onClick={showAll}
+          primary
+          style={{ marginLeft: '20px' }}
+          label="Посмотреть все"
+        />
+      </div>
+    </div>
+
   )
 }
 
@@ -20,5 +32,7 @@ export default PermReqList
 
 PermReqList.propTypes = {
   list: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  goToSendPermReq: PropTypes.func.isRequired
+  goToSendPermReq: PropTypes.func.isRequired,
+  showAll: PropTypes.func.isRequired,
+  deleteRequest: PropTypes.func.isRequired
 }

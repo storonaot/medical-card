@@ -11,7 +11,8 @@ import Auth from 'Auth'
 import Dashboard from 'Dashboard'
 import Profile from 'Profile'
 import Home from 'Home'
-import PermReq from 'PermReq'
+import SendPermReq from 'SendPermReq'
+import PermReqs from 'PermReqs'
 import { getCookie } from 'helpers'
 
 import reducer from 'store2/reducers'
@@ -36,7 +37,8 @@ render(
         <Route path="auth" component={Auth} onEnter={isAutorized} />
         <Route path="dashboard" component={Dashboard} onEnter={notAutorized} />
         <Route path="profile" component={Profile} onEnter={notAutorized} />
-        <Route path="send-perm-req" component={PermReq} onEnter={notAutorized} />
+        <Route path="send-perm-req" component={SendPermReq} onEnter={notAutorized} />
+        <Route path="perm-reqs" component={PermReqs} onEnter={notAutorized} />
       </Route>
     </Router>
   </Provider>,

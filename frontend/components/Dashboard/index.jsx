@@ -1,5 +1,6 @@
 import { connect } from 'react-redux'
 import { Paper, Title } from '_shared'
+import { fetchRequests, getUser } from 'store2/actions'
 import RaisedButton from 'material-ui/RaisedButton'
 import DoctorDashboard from './Doctor'
 import PatientDashboard from './Patient'
@@ -16,18 +17,25 @@ class Dashboard extends React.Component {
       decMsg: null
     }
 
-    this.goToSendPermReq = this.goToSendPermReq.bind(this)
+    this.goTo = this.goTo.bind(this)
   }
 
-  goToSendPermReq() {
-    console.log('goToSendPermReq')
-    this.props.router.push('send-perm-req')
+  componentDidMount() {
+    this.props.onGetUser()
   }
+
+  getLastThreeRequests() {
+    const requests = this.props.requests.data
+    if (requests.length > 3) return _.slice(requests, 0, 3)
+    return requests
+  }
+
+  goTo(path) { this.props.router.push(path) }
 
   render() {
-    const { user, router } = this.props
-    if (user.loading) return (<div>Loading...</div>)
-    else if (user.errors) return (<div>Errors...</div>)
+    const { user, router, requests } = this.props
+    if (user.loading || requests.loading) return (<div>Loading...</div>)
+    else if (user.errors || requests.errors) return (<div>Errors...</div>)
 
     if (!user.data.personalInfo) {
       return (
@@ -44,15 +52,21 @@ class Dashboard extends React.Component {
 
     if (user.data.isDoctor) {
       return (
-        <DoctorDashboard
-          goToSendPermReq={this.goToSendPermReq}
-          user={user.data}
-        />)
+        <div>
+          <DoctorDashboard
+            goToSendPermReq={() => { this.goTo('send-perm-req') }}
+            showAll={() => { this.goTo('perm-reqs') }}
+            user={user.data}
+            requests={this.getLastThreeRequests()}
+            deleteRequest={(id) => { console.log('deleteRequest', id) }}
+          />
+        </div>
+      )
     }
 
     return (
       <div>
-        <PatientDashboard user={user.data} />
+        <PatientDashboard user={user.data} requests={requests.data} />
       </div>
     )
   }
@@ -61,20 +75,28 @@ class Dashboard extends React.Component {
 export default connect(
   (state, ownProps) => ({
     user: state.user,
+    requests: state.requests,
     ownProps
+  }),
+  dispatch => ({
+    onGetUser: () => {
+      dispatch(getUser()).then((response) => {
+        if (response.status === 200 && response.data) {
+          const account = response.data.isDoctor ? 'doctor' : 'patient'
+          dispatch(fetchRequests(account))
+        }
+      })
+    }
   })
-  // dispatch => ({
-  //   onSignOut: () => { dispatch(signOut()) }
-  // })
 )(Dashboard)
 
-Dashboard.defaultProps = {
-  user: null
-}
-
 Dashboard.propTypes = {
-  user: PropTypes.shape({
-    uid: PropTypes.string
-  }),
-  router: PropTypes.shape({}).isRequired
+  user: PropTypes.shape({}).isRequired,
+  router: PropTypes.shape({
+    push: PropTypes.func
+  }).isRequired,
+  requests: PropTypes.shape({
+    data: PropTypes.arrayOf(PropTypes.shape({}))
+  }).isRequired,
+  onGetUser: PropTypes.func.isRequired
 }

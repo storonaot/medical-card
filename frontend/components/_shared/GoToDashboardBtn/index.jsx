@@ -4,7 +4,7 @@ const GoToDashboardBtn = ({ path, push }) => {
   if (path !== '/' && path !== '/dashboard' && path !== '/auth') {
     return (
       <RaisedButton
-        label="Go to Dashboard"
+        label="Панель управления"
         onClick={() => { push('/dashboard') }}
         style={{ alignSelf: 'flex-end', marginBottom: '20px' }}
       />

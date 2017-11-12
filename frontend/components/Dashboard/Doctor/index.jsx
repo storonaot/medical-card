@@ -4,7 +4,7 @@ import PersonalBlock from '../PersonalBlock'
 import PatientsList from './PatientsList'
 import PermReqList from './PermReqList'
 
-const DoctorDashboard = ({ user, goToSendPermReq }) => {
+const DoctorDashboard = ({ user, goToSendPermReq, requests, showAll, deleteRequest }) => {
   const userData = [
     { id: 1, title: 'Login', value: user.login },
     { id: 2, title: 'First Name', value: user.personalInfo.firstName },
@@ -28,7 +28,7 @@ const DoctorDashboard = ({ user, goToSendPermReq }) => {
         <Row>
           <Col md={12} style={{ marginBottom: '1rem' }}>
             <Paper>
-              <Title text="My Patients" />
+              <Title text="Мои пациенты" />
               <PatientsList
                 list={[]}
                 goToSendPermReq={goToSendPermReq}
@@ -37,10 +37,12 @@ const DoctorDashboard = ({ user, goToSendPermReq }) => {
           </Col>
           <Col md={12}>
             <Paper>
-              <Title text="My Permissoin Requests" />
+              <Title text="Запросы доступа" />
               <PermReqList
-                list={[]}
+                list={requests}
                 goToSendPermReq={goToSendPermReq}
+                showAll={showAll}
+                deleteRequest={deleteRequest}
               />
             </Paper>
           </Col>
@@ -54,5 +56,8 @@ export default DoctorDashboard
 
 DoctorDashboard.propTypes = {
   user: PropTypes.shape({}).isRequired,
-  goToSendPermReq: PropTypes.func.isRequired
+  goToSendPermReq: PropTypes.func.isRequired,
+  requests: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+  showAll: PropTypes.func.isRequired,
+  deleteRequest: PropTypes.func.isRequired
 }

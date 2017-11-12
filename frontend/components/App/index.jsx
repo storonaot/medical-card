@@ -1,6 +1,7 @@
-import { Header, Navbar, GoToDashboardBtn } from '_shared'
 import { connect } from 'react-redux'
-import { toggleSidebar, getUser, signOut } from 'store2/actions'
+import { Header, Navbar, GoToDashboardBtn } from '_shared'
+import Snackbar from 'material-ui/Snackbar'
+import { toggleSidebar, getUser, signOut, closeSnackBar } from 'store2/actions'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 // const electron = window.require('electron')
@@ -8,6 +9,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import muiTheme from './muiTheme'
 import styles from './styles'
+
 
 class App extends React.Component {
   constructor(props) {
@@ -41,13 +43,15 @@ class App extends React.Component {
   render() {
     const {
       children, sidebarOpened, user,
-      onToggleSidebar, location, router
+      onToggleSidebar, location, router,
+      snackbarShow, snackbarMsg, onCloseSnackBar
     } = this.props
 
     const email = user.data ? user.data.email : null
+    const isDoctor = user.data ? user.data.isDoctor : false
 
     return (
-      <MuiThemeProvider muiTheme={muiTheme}>
+      <MuiThemeProvider muiTheme={muiTheme(isDoctor ? 'doctor' : 'patient')}>
         <div className={styles.app}>
           <Header
             toggleSidebar={onToggleSidebar}
@@ -68,6 +72,13 @@ class App extends React.Component {
             />
             {children}
           </div>
+          <Snackbar
+            open={snackbarShow}
+            message={snackbarMsg}
+            autoHideDuration={4000}
+            onClick={onCloseSnackBar}
+            onRequestClose={onCloseSnackBar}
+          />
         </div>
       </MuiThemeProvider>
     )
@@ -77,12 +88,15 @@ class App extends React.Component {
 export default connect(
   state => ({
     sidebarOpened: state.ui.sidebarOpened,
-    user: state.user
+    user: state.user,
+    snackbarShow: state.ui.snackBar.show,
+    snackbarMsg: state.ui.snackBar.msg
   }),
   dispatch => ({
     onToggleSidebar: () => { dispatch(toggleSidebar()) },
     onGetUser: () => (dispatch(getUser())),
-    onSignOut: () => (dispatch(signOut()))
+    onSignOut: () => (dispatch(signOut())),
+    onCloseSnackBar: () => { dispatch(closeSnackBar()) }
   })
 )(App)
 
@@ -103,5 +117,8 @@ App.propTypes = {
   location: PropTypes.shape({
     pathname: PropTypes.string
   }).isRequired,
-  onGetUser: PropTypes.func.isRequired
+  onGetUser: PropTypes.func.isRequired,
+  snackbarShow: PropTypes.bool.isRequired,
+  snackbarMsg: PropTypes.string.isRequired,
+  onCloseSnackBar: PropTypes.func.isRequired
 }

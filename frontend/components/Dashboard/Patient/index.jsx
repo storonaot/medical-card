@@ -23,10 +23,10 @@ const PatientDashboard = ({ user }) => {
       <Col md={6}>
         <Row>
           <Col md={12} style={{ marginBottom: '1rem' }}>
-            <Paper><Title text="My Doctors" /></Paper>
+            <Paper><Title text="Мои доктора" /></Paper>
           </Col>
           <Col md={12}>
-            <Paper><Title text="Permissoin Requests" /></Paper>
+            <Paper><Title text="Запросы доступа" /></Paper>
           </Col>
         </Row>
       </Col>

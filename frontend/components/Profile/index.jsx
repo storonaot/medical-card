@@ -32,7 +32,6 @@ class Profile extends React.Component {
     const userId = this.props.user._id
     const ethAccountKeys = createEthAccount()
     const pemRsaKeys = generateRSAKeyPair()
-    console.log('pemRsaKeys', pemRsaKeys.publicKey)
     const fileContent = {
       eth: ethAccountKeys,
       pem: pemRsaKeys
@@ -45,7 +44,6 @@ class Profile extends React.Component {
 
   sendPersonalInfo() {
     // TODO: - сделать проверку если вдруг файл создать не удалось
-    console.log('sendPersonalInfo')
     const { user, router } = this.props
     const {
       firstName, lastName, specialisation,
@@ -59,7 +57,6 @@ class Profile extends React.Component {
 
     this.props.onSendPersonalInfo(userId, resultObj).then((response) => {
       if (response.data) router.push('dashboard')
-      console.log('onSendPersonalInfo', response)
     })
   }
 
@@ -71,7 +68,6 @@ class Profile extends React.Component {
   }
 
   render() {
-    // console.log('this.props', this.props.user.data)
     const { user } = this.props
     if (!user) return null
     return (
