@@ -16,4 +16,18 @@ const fetchRequests = account => (dispatch) => {
   })
 }
 
-export default fetchRequests
+const removeRequest = requestId => dispatch => (
+  axios.delete(`/api/v1/request/${requestId}`).then((response) => {
+    dispatch({
+      type: 'REMOVE_REQUEST',
+      payload: requestId
+    })
+    console.log('response', response)
+    return response
+  }, (error) => {
+    console.error('error', error.response)
+    return error.response
+  })
+)
+
+export { fetchRequests, removeRequest }

@@ -1,8 +1,10 @@
 import { connect } from 'react-redux'
-import { getUser, fetchRequests } from 'store2/actions'
+import { getUser, fetchRequests, removeRequest, showSnackBar } from 'store2/actions'
 import RaisedButton from 'material-ui/RaisedButton'
 import { Row, Col } from 'react-flexbox-grid'
 import { Paper, Title, List, ListItem } from '_shared'
+import PatientPermReq from './Patient'
+import DoctorPermReq from './Doctor'
 import styles from './styles'
 
 class PermReqs extends React.Component {
@@ -22,38 +24,36 @@ class PermReqs extends React.Component {
     }
   }
 
-  deleteRequest(id) {
-    console.log('deleteRequest', id)
+  deleteRequest(requestId) {
+    this.props.onRemoveRequest(requestId).then((response) => {
+      if (response.status === 200) this.props.onShowSnackBar('Запрос удален.')
+    })
+  }
+
+  updateReqStatus(requestId, status) {
+    console.log('updateReqStatus', requestId, status)
   }
 
   render() {
     const { user, requests, router } = this.props
     if (user.loading || requests.loading) return (<div>Loading...</div>)
     else if (user.errors || requests.errors) return (<div>Errors</div>)
+
+    if (user.data.isDoctor) {
+      return (
+        <DoctorPermReq
+          router={router}
+          requests={requests.data}
+          deleteRequest={this.deleteRequest}
+        />
+      )
+    }
     return (
-      <Row>
-        <Col md={12}>
-          <Paper>
-            <div className={styles.top}>
-              <Title text="Запросы доступа" marginBottom={false} />
-              <RaisedButton
-                secondary
-                label="Отправить запрос"
-                onClick={() => { router.push('send-perm-req') }}
-              />
-            </div>
-            <List>
-              {requests.data.map(item => (
-                <ListItem
-                  deleteItem={this.deleteRequest}
-                  key={item._id}
-                  item={item}
-                />
-              ))}
-            </List>
-          </Paper>
-        </Col>
-      </Row>
+      <PatientPermReq
+        requests={requests.data}
+        successReq={(requestId) => { this.updateReqStatus(requestId, 'success') }}
+        declineReq={(requestId) => { this.updateReqStatus(requestId, 'cancel') }}
+      />
     )
   }
 }
@@ -73,7 +73,9 @@ export default connect(
         }
       })
     },
-    onFetchRequests: (account) => { dispatch(fetchRequests(account)) }
+    onFetchRequests: (account) => { dispatch(fetchRequests(account)) },
+    onRemoveRequest: requestId => dispatch(removeRequest(requestId)),
+    onShowSnackBar: (msg) => { dispatch(showSnackBar(msg)) }
   })
 )(PermReqs)
 
@@ -83,5 +85,8 @@ PermReqs.propTypes = {
     data: PropTypes.arrayOf(PropTypes.shape({}))
   }).isRequired,
   onGetUser: PropTypes.func.isRequired,
-  onFetchRequests: PropTypes.func.isRequired
+  onFetchRequests: PropTypes.func.isRequired,
+  onRemoveRequest: PropTypes.func.isRequired,
+  router: PropTypes.shape({}).isRequired,
+  onShowSnackBar: PropTypes.func.isRequired
 }

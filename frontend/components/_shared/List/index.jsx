@@ -19,8 +19,9 @@ List.propTypes = {
 }
 
 const fullName = item => `${item.lastName} ${item.firstName}`
+const subText = (item, type) => (type === '_to' ? item[type].login : item[type].personalInfo.specialisation)
 
-const ListItem = ({ item, controls, deleteItem }) => {
+const ListItem = ({ item, controls, deleteItem, type }) => {
   const controlsEl = controls || (
     <div className={styles.controls}>
       <StatusTag status={item.status} />
@@ -37,10 +38,10 @@ const ListItem = ({ item, controls, deleteItem }) => {
     <div key={item._id}>
       <li className={styles.listItem}>
         <div className={styles.leftSide}>
-          <Avatar size="small" photo={item._to.photo} />
+          <Avatar size="small" photo={item[type].photo} />
           <div className={styles.name}>
-            <span>{fullName(item._to.personalInfo)}</span>
-            <span className={styles.subText}>{item._to.login}</span>
+            <span>{fullName(item[type].personalInfo)}</span>
+            <span className={styles.subText}>{subText(item, type)}</span>
           </div>
         </div>
         {controlsEl}
@@ -54,11 +55,13 @@ export { List, ListItem }
 
 ListItem.defaultProps = {
   controls: null,
-  deleteItem: () => {}
+  deleteItem: () => {},
+  type: '_to'
 }
 
 ListItem.propTypes = {
   item: PropTypes.shape({}).isRequired,
   controls: PropTypes.element,
-  deleteItem: PropTypes.func
+  deleteItem: PropTypes.func,
+  type: PropTypes.oneOf(['_to', '_from'])
 }

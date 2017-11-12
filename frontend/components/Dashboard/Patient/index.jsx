@@ -1,8 +1,9 @@
 import { Paper, Title } from '_shared'
 import { Row, Col } from 'react-flexbox-grid'
 import PersonalBlock from '../PersonalBlock'
+import PermReqList from './PermReqList'
 
-const PatientDashboard = ({ user }) => {
+const PatientDashboard = ({ user, requests, showAll, successReq, declineReq }) => {
   const userData = [
     { id: 1, title: 'Login', value: user.login },
     { id: 2, title: 'First Name', value: user.personalInfo.firstName },
@@ -26,7 +27,15 @@ const PatientDashboard = ({ user }) => {
             <Paper><Title text="Мои доктора" /></Paper>
           </Col>
           <Col md={12}>
-            <Paper><Title text="Запросы доступа" /></Paper>
+            <Paper>
+              <Title text="Запросы доступа" />
+              <PermReqList
+                list={requests}
+                showAll={showAll}
+                successReq={successReq}
+                declineReq={declineReq}
+              />
+            </Paper>
           </Col>
         </Row>
       </Col>
@@ -37,5 +46,8 @@ const PatientDashboard = ({ user }) => {
 export default PatientDashboard
 
 PatientDashboard.propTypes = {
-  user: PropTypes.shape({}).isRequired
+  user: PropTypes.shape({}).isRequired,
+  showAll: PropTypes.func.isRequired,
+  successReq: PropTypes.func.isRequired,
+  declineReq: PropTypes.func.isRequired
 }

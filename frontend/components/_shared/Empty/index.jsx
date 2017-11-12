@@ -3,29 +3,36 @@ import styles from './styles'
 
 const emptyObj = {
   patients: {
-    msg: 'You dont have any patients yet.',
-    buttonTxt: 'Send permission request'
+    msg: 'У вас пока нет ни одного пациента.',
+    buttonTxt: 'Отправить запрос'
   },
   permReq: {
-    msg: 'You dont have any permission requests.',
-    buttonTxt: 'Send permission request'
+    msg: 'У вас пока нет ни одного запроса.',
+    buttonTxt: 'Отправить запрос'
   }
 }
 
-const Empty = ({ type, btnClick }) => (
-  <div className={styles.empty}>
-    <p className={styles.message}>{emptyObj[type].msg}</p>
-    <RaisedButton onClick={btnClick} secondary label={emptyObj[type].buttonTxt} />
-  </div>
-)
+const Empty = ({ type, btnClick }) => {
+  const btnComp = btnClick
+    ? (<RaisedButton onClick={btnClick} secondary label={emptyObj[type].buttonTxt} />)
+    : null
+
+  return (
+    <div className={styles.empty}>
+      <p className={styles.message}>{emptyObj[type].msg}</p>
+      {btnComp}
+    </div>
+  )
+}
 
 export default Empty
 
 Empty.defaultProps = {
-  type: 'patients'
+  type: 'patients',
+  btnClick: null
 }
 
 Empty.propTypes = {
   type: PropTypes.oneOf(['patients', 'permReq']),
-  btnClick: PropTypes.func.isRequired
+  btnClick: PropTypes.func
 }

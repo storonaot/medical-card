@@ -32,6 +32,10 @@ class Dashboard extends React.Component {
 
   goTo(path) { this.props.router.push(path) }
 
+  updateReqStatus(requestId, status) {
+    console.log('updateReqStatus', requestId, status)
+  }
+
   render() {
     const { user, router, requests } = this.props
     if (user.loading || requests.loading) return (<div>Loading...</div>)
@@ -66,7 +70,13 @@ class Dashboard extends React.Component {
 
     return (
       <div>
-        <PatientDashboard user={user.data} requests={requests.data} />
+        <PatientDashboard
+          user={user.data}
+          requests={this.getLastThreeRequests()}
+          showAll={() => { this.goTo('perm-reqs') }}
+          successReq={(requestId) => { this.updateReqStatus(requestId, 'success') }}
+          declineReq={(requestId) => { this.updateReqStatus(requestId, 'cancel') }}
+        />
       </div>
     )
   }
