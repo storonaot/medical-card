@@ -18,7 +18,7 @@ function createWindow () {
             protocol: 'file:',
             slashes: true
         });
-  mainWindow.loadURL(startUrl);
+  mainWindow.loadURL(startUrl)
 
   // mainSession.cookies.set({ value: { user: null }, name: 'MedicalCard' }, (error) => {
   //   mainSession.cookies.get({ name: 'MedicalCard' }, (error, cookies) => {

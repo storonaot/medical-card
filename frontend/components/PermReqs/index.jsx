@@ -1,11 +1,10 @@
 import { connect } from 'react-redux'
-import { getUser, fetchRequests, removeRequest, showSnackBar } from 'store2/actions'
-import RaisedButton from 'material-ui/RaisedButton'
-import { Row, Col } from 'react-flexbox-grid'
-import { Paper, Title, List, ListItem } from '_shared'
+import {
+  getUser, fetchRequests, removeRequest, showSnackBar,
+  updateRequestStatus
+} from 'store2/actions'
 import PatientPermReq from './Patient'
 import DoctorPermReq from './Doctor'
-import styles from './styles'
 
 class PermReqs extends React.Component {
   constructor(props) {
@@ -13,6 +12,7 @@ class PermReqs extends React.Component {
     this.state = {}
 
     this.deleteRequest = this.deleteRequest.bind(this)
+    this.updateReqStatus = this.updateReqStatus.bind(this)
   }
 
   componentDidMount() {
@@ -31,7 +31,10 @@ class PermReqs extends React.Component {
   }
 
   updateReqStatus(requestId, status) {
-    console.log('updateReqStatus', requestId, status)
+    this.props.onUpdateRequestStatus(requestId, { status }).then((response) => {
+      const msg = response.data.status === 'cancel' ? 'Запрос отменен' : 'Запрос одобрен'
+      this.props.onShowSnackBar(msg)
+    })
   }
 
   render() {
@@ -75,7 +78,8 @@ export default connect(
     },
     onFetchRequests: (account) => { dispatch(fetchRequests(account)) },
     onRemoveRequest: requestId => dispatch(removeRequest(requestId)),
-    onShowSnackBar: (msg) => { dispatch(showSnackBar(msg)) }
+    onShowSnackBar: (msg) => { dispatch(showSnackBar(msg)) },
+    onUpdateRequestStatus: (requestId, status) => dispatch(updateRequestStatus(requestId, status))
   })
 )(PermReqs)
 
@@ -88,5 +92,6 @@ PermReqs.propTypes = {
   onFetchRequests: PropTypes.func.isRequired,
   onRemoveRequest: PropTypes.func.isRequired,
   router: PropTypes.shape({}).isRequired,
-  onShowSnackBar: PropTypes.func.isRequired
+  onShowSnackBar: PropTypes.func.isRequired,
+  onUpdateRequestStatus: PropTypes.func.isRequired
 }

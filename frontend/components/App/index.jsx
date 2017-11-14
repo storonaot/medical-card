@@ -1,15 +1,19 @@
 import { connect } from 'react-redux'
 import { Header, Navbar, GoToDashboardBtn } from '_shared'
 import Snackbar from 'material-ui/Snackbar'
-import { toggleSidebar, getUser, signOut, closeSnackBar } from 'store2/actions'
+import {
+  toggleSidebar, signOut, closeSnackBar, addNewRequest,
+  deleteRequestFromStore, updateRequestStatusInStore
+} from 'store2/actions'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-
-// const electron = window.require('electron')
-// const fs = electron.remote.require('fs')
-
+import io from 'socket.io-client'
 import muiTheme from './muiTheme'
 import styles from './styles'
 
+const socket = io.connect()
+
+// const electron = window.require('electron')
+// const fs = electron.remote.require('fs')
 
 class App extends React.Component {
   constructor(props) {
@@ -17,18 +21,32 @@ class App extends React.Component {
     this.state = {}
     this.signOut = this.signOut.bind(this)
     this.goTo = this.goTo.bind(this)
+    this.socketInit = this.socketInit.bind(this)
   }
 
   componentDidMount() {
-    if (!this.props.user.data) {
-      this.props.onGetUser().then((response) => {
-        const unautorize = response.status === 401
-        const { pathname } = this.props.location
-        const isAuthPath = pathname === '/auth'
-        const isHomePath = pathname === '/'
-        if (unautorize && !isAuthPath && !isHomePath) this.props.router.push('/auth')
-      })
-    }
+    this.socketInit()
+  }
+
+  socketInit() {
+    const {
+      onAddNewRequest, onDeleteRequestFromStore, onUpdateRequestStatusInStore
+    } = this.props
+    this.socket = io.connect()
+    socket.on('permReqs', (content) => {
+      const { user } = this.props
+      const uid = user.data._id
+      const isDoctor = user.data.isDoctor
+      const toid = content.data._to._id || content.data._to
+      const fromid = content.data._from._id || content.data._from
+      if (uid === toid && !isDoctor) {
+        if (content.type === 'create') onAddNewRequest(content.data)
+        if (content.type === 'remove') onDeleteRequestFromStore(content.data._id)
+      }
+      if (uid === fromid && isDoctor) {
+        if (content.type === 'update') onUpdateRequestStatusInStore(content.data)
+      }
+    })
   }
 
   goTo(path) {
@@ -94,9 +112,15 @@ export default connect(
   }),
   dispatch => ({
     onToggleSidebar: () => { dispatch(toggleSidebar()) },
-    onGetUser: () => (dispatch(getUser())),
     onSignOut: () => (dispatch(signOut())),
-    onCloseSnackBar: () => { dispatch(closeSnackBar()) }
+    onCloseSnackBar: () => { dispatch(closeSnackBar()) },
+    onAddNewRequest: (request) => { dispatch(addNewRequest(request)) },
+    onDeleteRequestFromStore: (requestId) => {
+      dispatch(deleteRequestFromStore(requestId))
+    },
+    onUpdateRequestStatusInStore: (request) => {
+      dispatch(updateRequestStatusInStore(request))
+    }
   })
 )(App)
 
@@ -117,7 +141,6 @@ App.propTypes = {
   location: PropTypes.shape({
     pathname: PropTypes.string
   }).isRequired,
-  onGetUser: PropTypes.func.isRequired,
   snackbarShow: PropTypes.bool.isRequired,
   snackbarMsg: PropTypes.string.isRequired,
   onCloseSnackBar: PropTypes.func.isRequired

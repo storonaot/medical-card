@@ -22,7 +22,7 @@ const removeRequest = requestId => dispatch => (
       type: 'REMOVE_REQUEST',
       payload: requestId
     })
-    console.log('response', response)
+    // console.log('response', response)
     return response
   }, (error) => {
     console.error('error', error.response)
@@ -30,4 +30,43 @@ const removeRequest = requestId => dispatch => (
   })
 )
 
-export { fetchRequests, removeRequest }
+const deleteRequestFromStore = requestId => (dispatch) => {
+  dispatch({
+    type: 'DELETE_REQUEST_FROM_STORE',
+    payload: requestId
+  })
+}
+
+const updateRequestStatusInStore = request => (dispatch) => {
+  dispatch({
+    type: 'UPDATE_REQUEST_STATUS_IN_STORE',
+    payload: request
+  })
+}
+
+const updateRequestStatus = (requestId, status) => dispatch => (
+  axios.put(`/api/v1/request/${requestId}`, status).then((response) => {
+    console.log('UPDATE_REQUEST_STATUS', response.data)
+    dispatch({
+      type: 'UPDATE_REQUEST_STATUS',
+      payload: response.data
+    })
+
+    return response
+  }, (error) => {
+    console.error('error', error.response)
+    return error.response
+  })
+)
+
+const addNewRequest = request => (dispatch) => {
+  dispatch({
+    type: 'ADD_NEW_REQEST',
+    payload: request
+  })
+}
+
+export {
+  fetchRequests, removeRequest, updateRequestStatus,
+  addNewRequest, deleteRequestFromStore, updateRequestStatusInStore
+}

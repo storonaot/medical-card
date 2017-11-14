@@ -1,7 +1,18 @@
 import styles from './styles'
 
 const StatusTag = ({ status }) => {
-  const label = status === 'send' ? 'Отправлен' : 'Отказ'
+  let label
+  switch (status) {
+    case 'send':
+      label = 'Отправлен'
+      break
+    case 'cancel':
+      label = 'Отказано'
+      break
+    default:
+      label = 'Одобрено'
+      break
+  }
 
   return (<div className={styles[status]}>{label}</div>)
 }
@@ -9,8 +20,5 @@ const StatusTag = ({ status }) => {
 export default StatusTag
 
 StatusTag.propTypes = {
-  status: PropTypes.oneOf(['send', 'cancel']).isRequired
+  status: PropTypes.oneOf(['send', 'cancel', 'success']).isRequired
 }
-
-
-// const btnBgColor = item => (item.status === 'send' ? '#a4c639' : 'rgb(208, 63, 22)')

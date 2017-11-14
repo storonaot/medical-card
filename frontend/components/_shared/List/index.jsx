@@ -27,10 +27,11 @@ const ListItem = ({ item, controls, deleteItem, type }) => {
       <StatusTag status={item.status} />
       <IconButton
         onClick={() => { deleteItem(item._id) }}
-        tooltip="Удалить заявку"
+        tooltip={item.status === 'success' ? null : 'Удалить запрос'}
         tooltipPosition="top-center"
+        disabled={item.status === 'success'}
       >
-        <ContentClear color="rgb(208, 63, 22)" />
+        <ContentClear color="#d03f16" />
       </IconButton>
     </div>
   )

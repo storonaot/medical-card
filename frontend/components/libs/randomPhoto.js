@@ -22,7 +22,7 @@ const photos = [
   'https://www.mckinsey.com/~/media/McKinsey/Our%20People/Greg%20Kelly/Greg%20Kelly_thumbnail_img.ashx?mw=250&car=1:1',
   'http://www.unfpa.org/sites/default/files/styles/sowp_share_card/public/sowp/sharecards/card-08_2.png?itok=vnfzA97Q',
   'http://www.ecehh.org/wp-content/uploads/2013/08/Ian-Alcock-400x330.jpg',
-  'https://i.pinimg.com/736x/cc/fc/e3/ccfce37f0dbdcb01a2f24d5f4c7b1282--john-lennon-glasses-john-lennon-age.jpg',
+  'http://i.telegraph.co.uk/multimedia/archive/03491/Vladimir_Putin_1_3491835k.jpg',
   'http://media.popculture.com/2017/06/alaskanbushpeople-ami-20005140-640x480.jpg',
   'https://campaignforsocialscience.org.uk/wp-content/uploads/2015/02/James-Wilsdon-214x300.jpg',
   'https://depts.washington.edu/fammed/assets/images/people/colea.thumbnail.jpg',

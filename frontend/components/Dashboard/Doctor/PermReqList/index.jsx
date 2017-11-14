@@ -5,14 +5,15 @@ import styles from './styles'
 
 
 const PermReqList = ({ list, goToSendPermReq, showAll, deleteRequest }) => {
-  if (!list.length) return (<Empty btnClick={goToSendPermReq} type="permReq" />)
+  // const resultList = list.filter(item => (item.status !== 'success'))
+  const resultList = list.filter(item => item.status)
+  if (!resultList.length) return (<Empty btnClick={goToSendPermReq} type="permReq" />)
   return (
     <div>
       <List style={{ marginBottom: '20px' }}>
-        {list.map((item) => {
-          if (item.status !== 'success') return (<ListItem deleteItem={deleteRequest} key={item._id} item={item} />)
-          return null
-        })}
+        {resultList.map(item => (
+          <ListItem deleteItem={deleteRequest} key={item._id} item={item} />
+        ))}
       </List>
       <div className={styles.btnsWrapper}>
         <RaisedButton onClick={goToSendPermReq} secondary label="Отправить запрос" />
@@ -20,7 +21,7 @@ const PermReqList = ({ list, goToSendPermReq, showAll, deleteRequest }) => {
           onClick={showAll}
           primary
           style={{ marginLeft: '20px' }}
-          label="Посмотреть все"
+          label="Все запросы"
         />
       </div>
     </div>

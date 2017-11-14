@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { showSnackBar } from 'store2/actions'
+import { showSnackBar, getUser } from 'store2/actions'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 import { Paper, Title } from '_shared'
@@ -18,6 +18,10 @@ class SendPermReq extends React.Component {
     this.searchPatient = this.searchPatient.bind(this)
     this.updateValue = this.updateValue.bind(this)
     this.sendPermission = this.sendPermission.bind(this)
+  }
+
+  componentDidMount() {
+    this.props.onGetUser()
   }
 
   searchPatient() {
@@ -98,7 +102,8 @@ export default connect(
   dispatch => ({
     onShowSnackBar: (msg) => {
       dispatch(showSnackBar(msg))
-    }
+    },
+    onGetUser: () => { dispatch(getUser()) }
   })
 )(SendPermReq)
 

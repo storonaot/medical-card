@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { Paper, Title } from '_shared'
-import { fetchRequests, getUser } from 'store2/actions'
+import { fetchRequests, getUser, removeRequest, showSnackBar, updateRequestStatus } from 'store2/actions'
 import RaisedButton from 'material-ui/RaisedButton'
 import DoctorDashboard from './Doctor'
 import PatientDashboard from './Patient'
@@ -18,6 +18,7 @@ class Dashboard extends React.Component {
     }
 
     this.goTo = this.goTo.bind(this)
+    this.updateReqStatus = this.updateReqStatus.bind(this)
   }
 
   componentDidMount() {
@@ -33,7 +34,16 @@ class Dashboard extends React.Component {
   goTo(path) { this.props.router.push(path) }
 
   updateReqStatus(requestId, status) {
-    console.log('updateReqStatus', requestId, status)
+    this.props.onUpdateRequestStatus(requestId, { status }).then((response) => {
+      const msg = response.data.status === 'cancel' ? 'Запрос отменен' : 'Запрос одобрен'
+      this.props.onShowSnackBar(msg)
+    })
+  }
+
+  deleteRequest(requestId) {
+    this.props.onRemoveRequest(requestId).then((response) => {
+      if (response.status === 200) this.props.onShowSnackBar('Запрос удален.')
+    })
   }
 
   render() {
@@ -62,7 +72,7 @@ class Dashboard extends React.Component {
             showAll={() => { this.goTo('perm-reqs') }}
             user={user.data}
             requests={this.getLastThreeRequests()}
-            deleteRequest={(id) => { console.log('deleteRequest', id) }}
+            deleteRequest={(id) => { this.deleteRequest(id) }}
           />
         </div>
       )
@@ -96,7 +106,10 @@ export default connect(
           dispatch(fetchRequests(account))
         }
       })
-    }
+    },
+    onRemoveRequest: requestId => dispatch(removeRequest(requestId)),
+    onShowSnackBar: (msg) => { dispatch(showSnackBar(msg)) },
+    onUpdateRequestStatus: (id, status) => dispatch(updateRequestStatus(id, status))
   })
 )(Dashboard)
 
