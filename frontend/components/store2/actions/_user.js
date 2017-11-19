@@ -1,4 +1,4 @@
-import { setCookie, deleteCookie } from 'helpers'
+import { setCookie, deleteCookie, setPasswordToLS, removePasswordFromLS } from 'helpers'
 
 const getUser = () => (dispatch) => {
   dispatch({
@@ -32,6 +32,7 @@ const signIn = data => (dispatch) => {
       payload: response.data
     })
     setCookie('user', JSON.stringify(response.data))
+    setPasswordToLS(data.passPhrase)
     return response
   }, (error) => {
     dispatch({
@@ -53,6 +54,7 @@ const signUp = data => (dispatch) => {
       payload: response.data
     })
     setCookie('user', JSON.stringify(response.data))
+    setPasswordToLS(data.passPhrase)
     return response
   }, (error) => {
     dispatch({
@@ -68,6 +70,7 @@ const signOut = () => dispatch => (
     dispatch({
       type: 'USER_DESTROY'
     })
+    removePasswordFromLS()
     deleteCookie('user')
   })
 )

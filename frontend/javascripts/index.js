@@ -13,6 +13,7 @@ import Profile from 'Profile'
 import Home from 'Home'
 import SendPermReq from 'SendPermReq'
 import PermReqs from 'PermReqs'
+import MedicalCard from 'MedicalCard'
 import { getCookie } from 'helpers'
 
 import reducer from 'store2/reducers'
@@ -39,6 +40,7 @@ render(
         <Route path="profile" component={Profile} onEnter={notAutorized} />
         <Route path="send-perm-req" component={SendPermReq} onEnter={notAutorized} />
         <Route path="perm-reqs" component={PermReqs} onEnter={notAutorized} />
+        <Route path="medical-card/:id" component={MedicalCard} onEnter={notAutorized} />
       </Route>
     </Router>
   </Provider>,

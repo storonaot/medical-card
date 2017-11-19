@@ -1,17 +1,28 @@
-import { List, ListItem } from 'material-ui/List'
+import { Empty, List, ListItem } from '_shared'
 import RaisedButton from 'material-ui/RaisedButton'
-import { Avatar, Empty } from '_shared'
 
-const PatientsList = ({ list, goToSendPermReq }) => {
-  if (!list.length) return (<Empty btnClick={goToSendPermReq} />)
+const PatientsList = ({ patients, goToSendPermReq, showMedicalCard }) => {
+  const { loading, errors, data } = patients
+  if (loading) return (<div>Loading...</div>)
+  else if (errors) return (<div>Errors...</div>)
+
+  if (!data.length) return (<Empty btnClick={goToSendPermReq} />)
   return (
     <List>
-      <ListItem
-        leftAvatar={<Avatar size="small" photo="https://avatanplus.com/files/resources/mid/56f14fdc0d0351539e9ff395.png" />}
-        rightIcon={<RaisedButton secondary label="More" />}
-        primaryText="Irina Zhigalova"
-        secondaryText="storonaot"
-      />
+      {data.map(item => (
+        <ListItem
+          key={item._id}
+          item={item}
+          type="_patient"
+          controls={
+            <RaisedButton
+              secondary
+              label="Мед карта"
+              onClick={() => { showMedicalCard(item._patient._id) }}
+            />
+          }
+        />
+      ))}
     </List>
   )
 }
@@ -19,6 +30,7 @@ const PatientsList = ({ list, goToSendPermReq }) => {
 export default PatientsList
 
 PatientsList.propTypes = {
-  list: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
-  goToSendPermReq: PropTypes.func.isRequired
+  patients: PropTypes.shape({}).isRequired,
+  goToSendPermReq: PropTypes.func.isRequired,
+  showMedicalCard: PropTypes.func.isRequired
 }

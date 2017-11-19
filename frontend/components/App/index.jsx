@@ -30,7 +30,8 @@ class App extends React.Component {
 
   socketInit() {
     const {
-      onAddNewRequest, onDeleteRequestFromStore, onUpdateRequestStatusInStore
+      onAddNewRequest, onDeleteRequestFromStore,
+      onUpdateRequestStatusInStore
     } = this.props
     this.socket = io.connect()
     socket.on('permReqs', (content) => {

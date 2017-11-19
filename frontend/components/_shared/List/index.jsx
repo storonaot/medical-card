@@ -19,7 +19,11 @@ List.propTypes = {
 }
 
 const fullName = item => `${item.lastName} ${item.firstName}`
-const subText = (item, type) => (type === '_to' ? item[type].login : item[type].personalInfo.specialisation)
+const subText = (item, type) => (
+  type === '_to' || type === '_patient'
+    ? item[type].login
+    : item[type].personalInfo.specialisation
+)
 
 const ListItem = ({ item, controls, deleteItem, type }) => {
   const controlsEl = controls || (
@@ -64,5 +68,5 @@ ListItem.propTypes = {
   item: PropTypes.shape({}).isRequired,
   controls: PropTypes.element,
   deleteItem: PropTypes.func,
-  type: PropTypes.oneOf(['_to', '_from'])
+  type: PropTypes.oneOf(['_to', '_from', '_patient', 'doctor'])
 }

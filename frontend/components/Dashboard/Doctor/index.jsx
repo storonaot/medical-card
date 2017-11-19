@@ -4,7 +4,10 @@ import PersonalBlock from '../PersonalBlock'
 import PatientsList from './PatientsList'
 import PermReqList from './PermReqList'
 
-const DoctorDashboard = ({ user, goToSendPermReq, requests, showAll, deleteRequest }) => {
+const DoctorDashboard = ({
+  user, goToSendPermReq, requests, showAll,
+  deleteRequest, patients, showMedicalCard
+}) => {
   const userData = [
     { id: 1, title: 'Login', value: user.login },
     { id: 2, title: 'First Name', value: user.personalInfo.firstName },
@@ -30,8 +33,9 @@ const DoctorDashboard = ({ user, goToSendPermReq, requests, showAll, deleteReque
             <Paper>
               <Title text="Мои пациенты" />
               <PatientsList
-                list={[]}
+                patients={patients}
                 goToSendPermReq={goToSendPermReq}
+                showMedicalCard={showMedicalCard}
               />
             </Paper>
           </Col>
@@ -59,5 +63,7 @@ DoctorDashboard.propTypes = {
   goToSendPermReq: PropTypes.func.isRequired,
   requests: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   showAll: PropTypes.func.isRequired,
-  deleteRequest: PropTypes.func.isRequired
+  deleteRequest: PropTypes.func.isRequired,
+  showMedicalCard: PropTypes.func.isRequired,
+  patients: PropTypes.shape({}).isRequired
 }

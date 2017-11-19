@@ -1,6 +1,9 @@
 import { connect } from 'react-redux'
 import { Paper, Title } from '_shared'
-import { fetchRequests, getUser, removeRequest, showSnackBar, updateRequestStatus } from 'store2/actions'
+import {
+  fetchRequests, getUser, removeRequest, showSnackBar,
+  updateRequestStatus, addMedicalCard, fetchPatients, fetchDoctors
+} from 'store2/actions'
 import RaisedButton from 'material-ui/RaisedButton'
 import DoctorDashboard from './Doctor'
 import PatientDashboard from './Patient'
@@ -19,6 +22,7 @@ class Dashboard extends React.Component {
 
     this.goTo = this.goTo.bind(this)
     this.updateReqStatus = this.updateReqStatus.bind(this)
+    this.showMedicalCard = this.showMedicalCard.bind(this)
   }
 
   componentDidMount() {
@@ -37,6 +41,13 @@ class Dashboard extends React.Component {
     this.props.onUpdateRequestStatus(requestId, { status }).then((response) => {
       const msg = response.data.status === 'cancel' ? 'Запрос отменен' : 'Запрос одобрен'
       this.props.onShowSnackBar(msg)
+      if (response.data.status === 'success') {
+        const mCard = {
+          _doctor: response.data._from,
+          medicalCard: null
+        }
+        this.props.onAddMedicalCard(mCard)
+      }
     })
   }
 
@@ -46,8 +57,13 @@ class Dashboard extends React.Component {
     })
   }
 
+  showMedicalCard(patientId) {
+    console.log('showMedicalCard', patientId)
+    this.props.router.push(`medical-card/${patientId}`)
+  }
+
   render() {
-    const { user, router, requests } = this.props
+    const { user, router, requests, patients, doctors } = this.props
     if (user.loading || requests.loading) return (<div>Loading...</div>)
     else if (user.errors || requests.errors) return (<div>Errors...</div>)
 
@@ -73,6 +89,8 @@ class Dashboard extends React.Component {
             user={user.data}
             requests={this.getLastThreeRequests()}
             deleteRequest={(id) => { this.deleteRequest(id) }}
+            patients={patients}
+            showMedicalCard={(patientId) => { this.showMedicalCard(patientId) }}
           />
         </div>
       )
@@ -86,6 +104,7 @@ class Dashboard extends React.Component {
           showAll={() => { this.goTo('perm-reqs') }}
           successReq={(requestId) => { this.updateReqStatus(requestId, 'success') }}
           declineReq={(requestId) => { this.updateReqStatus(requestId, 'cancel') }}
+          doctors={doctors}
         />
       </div>
     )
@@ -96,6 +115,8 @@ export default connect(
   (state, ownProps) => ({
     user: state.user,
     requests: state.requests,
+    patients: state.patients,
+    doctors: state.patients,
     ownProps
   }),
   dispatch => ({
@@ -103,13 +124,16 @@ export default connect(
       dispatch(getUser()).then((response) => {
         if (response.status === 200 && response.data) {
           const account = response.data.isDoctor ? 'doctor' : 'patient'
+          const funcType = response.data.isDoctor ? fetchPatients : fetchDoctors
           dispatch(fetchRequests(account))
+          dispatch(funcType())
         }
       })
     },
     onRemoveRequest: requestId => dispatch(removeRequest(requestId)),
     onShowSnackBar: (msg) => { dispatch(showSnackBar(msg)) },
-    onUpdateRequestStatus: (id, status) => dispatch(updateRequestStatus(id, status))
+    onUpdateRequestStatus: (id, status) => dispatch(updateRequestStatus(id, status)),
+    onAddMedicalCard: (data) => { dispatch(addMedicalCard(data)) }
   })
 )(Dashboard)
 
@@ -121,5 +145,11 @@ Dashboard.propTypes = {
   requests: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}))
   }).isRequired,
-  onGetUser: PropTypes.func.isRequired
+  onGetUser: PropTypes.func.isRequired,
+  onUpdateRequestStatus: PropTypes.func.isRequired,
+  onShowSnackBar: PropTypes.func.isRequired,
+  onRemoveRequest: PropTypes.func.isRequired,
+  onAddMedicalCard: PropTypes.func.isRequired,
+  patients: PropTypes.shape({}).isRequired,
+  doctors: PropTypes.shape({}).isRequired
 }

@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { signUp, signIn, showSnackBar } from 'store2/actions'
 import { Paper } from '_shared'
 import { randomPhoto } from 'libs'
+import { createEthAccount } from 'helpers'
 import styles from './styles'
 import SignIn from './SignIn'
 import SignUp from './SignUp'
@@ -30,6 +31,7 @@ class Auth extends React.Component {
     this.updateStateValue = this.updateStateValue.bind(this)
     this.signUp = this.signUp.bind(this)
     this.signIn = this.signIn.bind(this)
+    this.createEthAccount = this.createEthAccount.bind(this)
   }
 
   changeTab(currentTab) {
@@ -45,12 +47,20 @@ class Auth extends React.Component {
     this.setState({ [currentTab]: data })
   }
 
-  signUp() {
-    const { login, email, passPhrase, isDoctor } = this.state.signUp
-    const data = { login, email, passPhrase, isDoctor, photo: randomPhoto() }
-    this.props.onSignUp(data).then((response) => {
-      if (response.status === 200) this.props.router.push('/dashboard')
-    })
+  createEthAccount() {
+    createEthAccount(this.state.signUp.passPhrase, this.signUp)
+  }
+
+  signUp(err, ethAddress) {
+    if (err) {
+      console.log(err)
+    } else {
+      const { login, email, passPhrase, isDoctor } = this.state.signUp
+      const data = { login, email, passPhrase, isDoctor, photo: randomPhoto(), ethAddress }
+      this.props.onSignUp(data).then((response) => {
+        if (response.status === 200) this.props.router.push('/dashboard')
+      })
+    }
   }
 
   signIn() {
@@ -91,7 +101,7 @@ class Auth extends React.Component {
               <SignUp
                 data={signUpData}
                 updateValue={this.updateStateValue}
-                signUp={this.signUp}
+                signUp={this.createEthAccount}
                 disabledButton={false}
               />
             </Paper>

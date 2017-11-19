@@ -8,7 +8,7 @@
   },
   "extends": "airbnb",
   "rules": {
-    "no-underscore-dangle": ["error", { "allow": ["_id", "_to", "_from"] }],
+    "no-underscore-dangle": ["error", { "allow": ["_id", "_to", "_from", "_patient", "_doctor"] }],
     "no-useless-escape": 2,
     "semi": [2, "never"],
     "no-console": ["off", { allow: ["warn", "error"] }],

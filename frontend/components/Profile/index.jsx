@@ -1,9 +1,6 @@
 import { connect } from 'react-redux'
-import { sendPersonalInfo } from 'store2/actions'
-// import { createKeyFile } from 'helpers'
-import { createEthAccount, createKeyFile, generateRSAKeyPair } from 'helpers'
-// import Web3 from 'web3'
-
+import { sendPersonalInfo, createTransactions } from 'store2/actions'
+import { createKeyFile, generateRSAKeyPair } from 'helpers'
 import Form from './Form'
 
 class Profile extends React.Component {
@@ -14,31 +11,24 @@ class Profile extends React.Component {
       lastName: '',
       specialisation: '',
       gender: 'femail',
-      ethAddress: null,
-      publicPEM: null
+      publicKey: null
     }
 
     this.updateValue = this.updateValue.bind(this)
     this.sendPersonalInfo = this.sendPersonalInfo.bind(this)
-    this.createEthAccount = this.createEthAccount.bind(this)
-    // this.addPersonalInfo = this.addPersonalInfo.bind(this)
+    this.createKeyFile = this.createKeyFile.bind(this)
   }
 
   updateValue(name, value) {
     this.setState({ [name]: value })
   }
 
-  createEthAccount() {
+  createKeyFile() {
     const userId = this.props.user._id
-    const ethAccountKeys = createEthAccount()
     const pemRsaKeys = generateRSAKeyPair()
-    const fileContent = {
-      eth: ethAccountKeys,
-      pem: pemRsaKeys
-    }
     this.setState(
-      { ethAddress: ethAccountKeys.address, publicPEM: pemRsaKeys.publicKey },
-      () => { createKeyFile(userId, JSON.stringify(fileContent), this.sendPersonalInfo) }
+      { publicKey: pemRsaKeys.publicKey },
+      () => { createKeyFile(userId, JSON.stringify(pemRsaKeys), this.sendPersonalInfo) }
     )
   }
 
@@ -47,16 +37,19 @@ class Profile extends React.Component {
     const { user, router } = this.props
     const {
       firstName, lastName, specialisation,
-      ethAddress, gender, publicPEM
+      ethAddress, gender, publicKey
     } = this.state
     const userId = user._id
     let personalInfo = { firstName, lastName, gender }
 
     if (user.isDoctor) personalInfo = { ...personalInfo, specialisation }
-    const resultObj = { personalInfo, ethAddress, publicPEM }
+    const resultObj = { personalInfo, ethAddress, publicKey }
 
     this.props.onSendPersonalInfo(userId, resultObj).then((response) => {
-      if (response.data) router.push('dashboard')
+      if (response.data) {
+        this.props.onCreateTransactions()
+        router.push('dashboard')
+      }
     })
   }
 
@@ -75,7 +68,7 @@ class Profile extends React.Component {
         isDoctor={user.isDoctor}
         data={user.personalInfo || this.state}
         updateValue={this.updateValue}
-        sendPersonalInfo={this.createEthAccount}
+        sendPersonalInfo={this.createKeyFile}
         disabledButton={this.disabledButton()}
         disabledFields={!!user.personalInfo}
       />
@@ -88,7 +81,8 @@ export default connect(
     user: state.user.data
   }),
   dispatch => ({
-    onSendPersonalInfo: (userId, data) => (dispatch(sendPersonalInfo(userId, data)))
+    onSendPersonalInfo: (userId, data) => (dispatch(sendPersonalInfo(userId, data))),
+    onCreateTransactions: () => { dispatch(createTransactions()) }
   })
 )(Profile)
 
@@ -101,5 +95,6 @@ Profile.propTypes = {
     _id: PropTypes.string
   }),
   onSendPersonalInfo: PropTypes.func.isRequired,
+  onCreateTransactions: PropTypes.func.isRequired,
   router: PropTypes.shape({}).isRequired
 }
