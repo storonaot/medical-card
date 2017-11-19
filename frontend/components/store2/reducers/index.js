@@ -7,6 +7,7 @@ import requests from './requests'
 import doctors from './doctors'
 import patients from './patients'
 import medicalCard from './medicalCard'
+import transactions from './transactions'
 
 export default combineReducers({
   routing: routerReducer,
@@ -15,5 +16,6 @@ export default combineReducers({
   requests,
   doctors,
   patients,
-  medicalCard
+  medicalCard,
+  transactions
 })

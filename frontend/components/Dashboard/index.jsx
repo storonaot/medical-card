@@ -2,7 +2,8 @@ import { connect } from 'react-redux'
 import { Paper, Title } from '_shared'
 import {
   fetchRequests, getUser, removeRequest, showSnackBar,
-  updateRequestStatus, addMedicalCard, fetchPatients, fetchDoctors
+  updateRequestStatus, addMedicalCard, fetchPatients, fetchDoctors,
+  deleteMedicalCard, fetchTransactions
 } from 'store2/actions'
 import RaisedButton from 'material-ui/RaisedButton'
 import DoctorDashboard from './Doctor'
@@ -23,10 +24,13 @@ class Dashboard extends React.Component {
     this.goTo = this.goTo.bind(this)
     this.updateReqStatus = this.updateReqStatus.bind(this)
     this.showMedicalCard = this.showMedicalCard.bind(this)
+    this.deleteDoctor = this.deleteDoctor.bind(this)
   }
 
   componentDidMount() {
-    this.props.onGetUser()
+    const { onGetUser, onFetchTransactions, transactions } = this.props
+    onGetUser()
+    if (!transactions.data) onFetchTransactions()
   }
 
   getLastThreeRequests() {
@@ -58,8 +62,11 @@ class Dashboard extends React.Component {
   }
 
   showMedicalCard(patientId) {
-    console.log('showMedicalCard', patientId)
     this.props.router.push(`medical-card/${patientId}`)
+  }
+
+  deleteDoctor(doctorId) {
+    this.props.onDeleteMedicalCard(doctorId)
   }
 
   render() {
@@ -105,6 +112,7 @@ class Dashboard extends React.Component {
           successReq={(requestId) => { this.updateReqStatus(requestId, 'success') }}
           declineReq={(requestId) => { this.updateReqStatus(requestId, 'cancel') }}
           doctors={doctors}
+          deleteDoctor={this.deleteDoctor}
         />
       </div>
     )
@@ -116,7 +124,8 @@ export default connect(
     user: state.user,
     requests: state.requests,
     patients: state.patients,
-    doctors: state.patients,
+    doctors: state.doctors,
+    transactions: state.transactions,
     ownProps
   }),
   dispatch => ({
@@ -133,7 +142,9 @@ export default connect(
     onRemoveRequest: requestId => dispatch(removeRequest(requestId)),
     onShowSnackBar: (msg) => { dispatch(showSnackBar(msg)) },
     onUpdateRequestStatus: (id, status) => dispatch(updateRequestStatus(id, status)),
-    onAddMedicalCard: (data) => { dispatch(addMedicalCard(data)) }
+    onAddMedicalCard: (data) => { dispatch(addMedicalCard(data)) },
+    onDeleteMedicalCard: (doctorId) => { dispatch(deleteMedicalCard(doctorId)) },
+    onFetchTransactions: () => { dispatch(fetchTransactions()) }
   })
 )(Dashboard)
 
@@ -145,11 +156,14 @@ Dashboard.propTypes = {
   requests: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}))
   }).isRequired,
+  transactions: PropTypes.shape({}).isRequired,
+  onFetchTransactions: PropTypes.func.isRequired,
   onGetUser: PropTypes.func.isRequired,
   onUpdateRequestStatus: PropTypes.func.isRequired,
   onShowSnackBar: PropTypes.func.isRequired,
   onRemoveRequest: PropTypes.func.isRequired,
   onAddMedicalCard: PropTypes.func.isRequired,
+  onDeleteMedicalCard: PropTypes.func.isRequired,
   patients: PropTypes.shape({}).isRequired,
   doctors: PropTypes.shape({}).isRequired
 }

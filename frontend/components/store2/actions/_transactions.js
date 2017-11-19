@@ -20,6 +20,23 @@ const addTransaction = (txHash, patientId) => (dispatch) => {
   })
 }
 
-const fetchTransactions = () => {}
+const fetchTransactions = () => (dispatch) => {
+  dispatch({
+    type: 'FETCH_TXS_ONLOAD'
+  })
+  axios.get('/api/v1/transactions').then((response) => {
+    console.log('fetchTransactions', response)
+    dispatch({
+      type: 'FETCH_TXS_SUCCESS',
+      payload: response.data
+    })
+  }, (error) => {
+    dispatch({
+      type: 'FETCH_TXS_ERROR',
+      payload: error.response
+    })
+    console.error('fetchTransactions error', error.response)
+  })
+}
 
 export { createTransactions, addTransaction, fetchTransactions }

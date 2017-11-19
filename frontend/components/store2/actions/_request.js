@@ -46,7 +46,6 @@ const updateRequestStatusInStore = request => (dispatch) => {
 
 const updateRequestStatus = (requestId, status) => dispatch => (
   axios.put(`/api/v1/request/${requestId}`, status).then((response) => {
-    console.log('UPDATE_REQUEST_STATUS', response.data)
     dispatch({
       type: 'UPDATE_REQUEST_STATUS',
       payload: response.data

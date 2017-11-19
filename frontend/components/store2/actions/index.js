@@ -7,7 +7,8 @@ import {
 
 import {
   fetchPatients, fetchDoctors, addMedicalCard,
-  fetchMedicalCard
+  fetchMedicalCard, deleteMedicalCard, updateDoctorsList,
+  updatePatientsList, deletePatientFromList
 } from './_medicalCard'
 import { createTransactions, addTransaction, fetchTransactions } from './_transactions'
 
@@ -16,5 +17,6 @@ export {
   sendPersonalInfo, closeSnackBar, showSnackBar, fetchRequests,
   removeRequest, updateRequestStatus, addNewRequest, deleteRequestFromStore,
   updateRequestStatusInStore, fetchPatients, fetchDoctors, addMedicalCard,
-  fetchMedicalCard, createTransactions, addTransaction, fetchTransactions
+  fetchMedicalCard, createTransactions, addTransaction, fetchTransactions,
+  deleteMedicalCard, updateDoctorsList, updatePatientsList, deletePatientFromList
 }

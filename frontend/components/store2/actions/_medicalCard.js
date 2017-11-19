@@ -16,6 +16,27 @@ const fetchDoctors = () => (dispatch) => {
   })
 }
 
+const updateDoctorsList = medCard => (dispatch) => {
+  dispatch({
+    type: 'UPDATE_DOCTORS_LIST',
+    payload: medCard
+  })
+}
+
+const updatePatientsList = medCard => (dispatch) => {
+  dispatch({
+    type: 'UPDATE_PATIENTS_LIST',
+    payload: medCard
+  })
+}
+
+const deletePatientFromList = cardId => (dispatch) => {
+  dispatch({
+    type: 'DELETE_PATIENT_FROM_LIST',
+    payload: cardId
+  })
+}
+
 const fetchPatients = () => (dispatch) => {
   dispatch({
     type: 'FETCH_PATIENTS_ONLOAD'
@@ -70,4 +91,20 @@ const addMedicalCard = data => (dispatch) => {
   })
 }
 
-export { fetchPatients, fetchDoctors, addMedicalCard, fetchMedicalCard }
+const deleteMedicalCard = doctorId => (dispatch) => {
+  axios.delete(`/api/v1/medical-card/${doctorId}`).then((response) => {
+    dispatch({
+      type: 'DELETE_DOCTOR',
+      payload: doctorId
+    })
+    console.log('deleteMedicalCard', response)
+  }, (error) => {
+    console.error('deleteMedicalCard err', error.response)
+  })
+}
+
+export {
+  fetchPatients, fetchDoctors, addMedicalCard, fetchMedicalCard,
+  deleteMedicalCard, updateDoctorsList, updatePatientsList,
+  deletePatientFromList
+}

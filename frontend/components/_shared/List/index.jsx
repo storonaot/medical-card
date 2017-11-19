@@ -68,5 +68,5 @@ ListItem.propTypes = {
   item: PropTypes.shape({}).isRequired,
   controls: PropTypes.element,
   deleteItem: PropTypes.func,
-  type: PropTypes.oneOf(['_to', '_from', '_patient', 'doctor'])
+  type: PropTypes.oneOf(['_to', '_from', '_patient', '_doctor'])
 }

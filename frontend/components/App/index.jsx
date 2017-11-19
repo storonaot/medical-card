@@ -3,7 +3,8 @@ import { Header, Navbar, GoToDashboardBtn } from '_shared'
 import Snackbar from 'material-ui/Snackbar'
 import {
   toggleSidebar, signOut, closeSnackBar, addNewRequest,
-  deleteRequestFromStore, updateRequestStatusInStore
+  deleteRequestFromStore, updateRequestStatusInStore,
+  updateDoctorsList, updatePatientsList, deletePatientFromList
 } from 'store2/actions'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import io from 'socket.io-client'
@@ -31,7 +32,8 @@ class App extends React.Component {
   socketInit() {
     const {
       onAddNewRequest, onDeleteRequestFromStore,
-      onUpdateRequestStatusInStore
+      onUpdateRequestStatusInStore, onUpdateDoctorsList,
+      onUpdatePatientsList, onDeletePatient, router, location
     } = this.props
     this.socket = io.connect()
     socket.on('permReqs', (content) => {
@@ -46,6 +48,26 @@ class App extends React.Component {
       }
       if (uid === fromid && isDoctor) {
         if (content.type === 'update') onUpdateRequestStatusInStore(content.data)
+        else if (content.type === 'remove') onDeleteRequestFromStore(content.data._id)
+      }
+    })
+
+    socket.on('medicalCard', (content) => {
+      const { user } = this.props
+      const uid = user.data._id
+      const patientId = content.data._patient._id || content.data._patient
+      const doctorId = content.data._doctor._id || content.data._doctor
+      if (uid === patientId) {
+        if (content.type === 'create') onUpdateDoctorsList(content.data)
+      }
+      if (uid === doctorId) {
+        if (content.type === 'create') onUpdatePatientsList(content.data)
+        else if (content.type === 'remove') {
+          if (location.pathname === `/medical-card/${patientId}`) {
+            router.push('dashboard')
+          }
+          onDeletePatient(content.data._id)
+        }
       }
     })
   }
@@ -121,6 +143,15 @@ export default connect(
     },
     onUpdateRequestStatusInStore: (request) => {
       dispatch(updateRequestStatusInStore(request))
+    },
+    onUpdateDoctorsList: (medCard) => {
+      dispatch(updateDoctorsList(medCard))
+    },
+    onUpdatePatientsList: (medCard) => {
+      dispatch(updatePatientsList(medCard))
+    },
+    onDeletePatient: (cardId) => {
+      dispatch(deletePatientFromList(cardId))
     }
   })
 )(App)
@@ -144,5 +175,11 @@ App.propTypes = {
   }).isRequired,
   snackbarShow: PropTypes.bool.isRequired,
   snackbarMsg: PropTypes.string.isRequired,
-  onCloseSnackBar: PropTypes.func.isRequired
+  onCloseSnackBar: PropTypes.func.isRequired,
+  onAddNewRequest: PropTypes.func.isRequired,
+  onDeleteRequestFromStore: PropTypes.func.isRequired,
+  onUpdateRequestStatusInStore: PropTypes.func.isRequired,
+  onUpdateDoctorsList: PropTypes.func.isRequired,
+  onUpdatePatientsList: PropTypes.func.isRequired,
+  onDeletePatient: PropTypes.func.isRequired
 }

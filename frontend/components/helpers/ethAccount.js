@@ -9,10 +9,11 @@ const unlockAccount = (address, password, callback) => (
 )
 
 const sendTransaction = transactionObject => (
-  web3.eth.sendTransaction(transactionObject, (err, hash) => {
-    console.log('err sendTransaction', err)
-    console.log('hash sendTransaction', hash)
-  })
+  // web3.eth.sendTransaction(transactionObject, (err, hash) => {
+  //   console.log('err sendTransaction', err)
+  //   console.log('hash sendTransaction', hash)
+  // })
+  web3.eth.sendTransaction(transactionObject)
 )
 
 const getTransaction = txHash => (web3.eth.getTransaction(txHash))
