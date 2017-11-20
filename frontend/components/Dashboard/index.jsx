@@ -6,6 +6,9 @@ import {
   deleteMedicalCard, fetchTransactions
 } from 'store2/actions'
 import RaisedButton from 'material-ui/RaisedButton'
+import async from 'async'
+import { web3 } from 'libs'
+import { getTransaction, readFile, decryptData } from 'helpers'
 import DoctorDashboard from './Doctor'
 import PatientDashboard from './Patient'
 import styles from './styles'
@@ -18,13 +21,17 @@ class Dashboard extends React.Component {
         `Для продолжения работы с приложением необходимо заполнить
         Персональную информацию`,
       encMsg: null,
-      decMsg: null
+      decMsg: null,
+      medicalCard: []
     }
 
     this.goTo = this.goTo.bind(this)
     this.updateReqStatus = this.updateReqStatus.bind(this)
     this.showMedicalCard = this.showMedicalCard.bind(this)
     this.deleteDoctor = this.deleteDoctor.bind(this)
+    this.getMedCardFromBCh = this.getMedCardFromBCh.bind(this)
+    this.pushMedicalRecord = this.pushMedicalRecord.bind(this)
+    this.fileRead = this.fileRead.bind(this)
   }
 
   componentDidMount() {
@@ -42,17 +49,53 @@ class Dashboard extends React.Component {
   goTo(path) { this.props.router.push(path) }
 
   updateReqStatus(requestId, status) {
-    this.props.onUpdateRequestStatus(requestId, { status }).then((response) => {
-      const msg = response.data.status === 'cancel' ? 'Запрос отменен' : 'Запрос одобрен'
-      this.props.onShowSnackBar(msg)
-      if (response.data.status === 'success') {
-        const mCard = {
-          _doctor: response.data._from,
-          medicalCard: null
-        }
-        this.props.onAddMedicalCard(mCard)
+    this.getMedCardFromBCh()
+    // this.props.onUpdateRequestStatus(requestId, { status }).then((response) => {
+    //   const msg = response.data.status === 'cancel' ? 'Запрос отменен' : 'Запрос одобрен'
+    //   this.props.onShowSnackBar(msg)
+    //   if (response.data.status === 'success') {
+    //     const mCard = {
+    //       _doctor: response.data._from,
+    //       medicalCard: null
+    //     }
+    //     this.props.onAddMedicalCard(mCard)
+    //   }
+    // })
+  }
+
+  // Нужно собрать все транзакции отправленные текущему пациенту
+
+  getMedCardFromBCh() {
+    const { txs } = this.props.transactions.data
+    async.each(txs, (txHash) => {
+      getTransaction(txHash).then(this.pushMedicalRecord)
+    })
+    // txs.forEach((txHash) => {
+    //   getTransaction(txHash).then(this.pushMedicalRecord)
+    // })
+  }
+
+  pushMedicalRecord(tx) {
+    const { medicalCard } = this.state
+    const { txs, _patient } = this.props.transactions.data
+    this.setState({ medicalCard: [...medicalCard, tx.input] }, () => {
+      if (medicalCard.length === txs.length - 1) {
+        console.log('medicalCard fetched')
+        readFile(_patient, this.fileRead)
       }
     })
+  }
+
+  fileRead(err, result) {
+    if (err) return console.log('fileRead', err)
+    const keyPair = JSON.parse(result.toString('utf8'))
+    const { privateKey } = keyPair
+    const records = []
+    this.state.medicalCard.forEach((card) => {
+      const decryptedRecord = decryptData(privateKey, web3.utils.hexToUtf8(card))
+      records.push(JSON.parse(decryptedRecord))
+    })
+    console.log('records', records)
   }
 
   deleteRequest(requestId) {
@@ -70,9 +113,9 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    const { user, router, requests, patients, doctors } = this.props
-    if (user.loading || requests.loading) return (<div>Loading...</div>)
-    else if (user.errors || requests.errors) return (<div>Errors...</div>)
+    const { user, router, requests, patients, doctors, transactions } = this.props
+    if (user.loading || requests.loading || transactions.loading) return (<div>Loading...</div>)
+    else if (user.errors || requests.errors || transactions.errors) return (<div>Errors...</div>)
 
     if (!user.data.personalInfo) {
       return (

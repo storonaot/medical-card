@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { sendPersonalInfo, createTransactions } from 'store2/actions'
-import { createKeyFile, generateRSAKeyPair } from 'helpers'
+import { createKeyFile, generateKeyPair } from 'helpers'
 import Form from './Form'
 
 class Profile extends React.Component {
@@ -25,10 +25,10 @@ class Profile extends React.Component {
 
   createKeyFile() {
     const userId = this.props.user._id
-    const pemRsaKeys = generateRSAKeyPair()
+    const keyPairPEM = generateKeyPair()
     this.setState(
-      { publicKey: pemRsaKeys.publicKey },
-      () => { createKeyFile(userId, JSON.stringify(pemRsaKeys), this.sendPersonalInfo) }
+      { publicKey: keyPairPEM.publicKey },
+      () => { createKeyFile(userId, JSON.stringify(keyPairPEM), this.sendPersonalInfo) }
     )
   }
 

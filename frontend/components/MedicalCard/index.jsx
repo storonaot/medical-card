@@ -4,7 +4,7 @@ import { Row, Col } from 'react-flexbox-grid'
 import RaisedButton from 'material-ui/RaisedButton'
 import { Paper } from '_shared'
 import { web3 } from 'libs'
-import { getPasswordFromLS, unlockAccount, sendTransaction } from 'helpers'
+import { getPasswordFromLS, unlockAccount, sendTransaction, encryptData } from 'helpers'
 import MedicalRecords from './MedicalRecords'
 import Form from './Form'
 
@@ -13,7 +13,6 @@ class MedicalCard extends React.Component {
     super(props)
     this.state = {
       formShown: true,
-      txHash: '0x2208e6aa9870fca05efbb40af18b0f04691c706ad545cd87249755e4893dde9d',
       newRecord: {
         diagnosis: '',
         attendantDiagnosis: '',
@@ -42,21 +41,23 @@ class MedicalCard extends React.Component {
 
   addRecord() {
     const { newRecord } = this.state
-    const password = getPasswordFromLS()
-    const { ethAddress } = this.props.user.data
     const { _patient } = this.props.medicalCard.data
+    const { ethAddress, publicKey, _id } = _patient
+    const { onAddTransaction } = this.props
+    const encryptedData = encryptData(publicKey, newRecord)
+    const senderPassword = getPasswordFromLS()
+    const senderEthAddress = this.props.user.data.ethAddress
     const txObj = {
-      from: ethAddress,
+      from: senderEthAddress,
       gas: 100000,
-      to: _patient.ethAddress,
-      data: web3.utils.toHex(JSON.stringify(newRecord))
+      to: ethAddress,
+      data: web3.utils.toHex(encryptedData)
     }
-    unlockAccount(ethAddress, password).then((unlocked) => {
+    unlockAccount(senderEthAddress, senderPassword).then((unlocked) => {
       if (unlocked) {
         sendTransaction(txObj).then((tx) => {
-          if (tx.transactionHash) {
-            this.props.onAddTransaction(tx.transactionHash, _patient._id)
-          }
+          if (tx.transactionHash) onAddTransaction(tx.transactionHash, _id)
+          else console.log('Hui')
         })
       }
     })

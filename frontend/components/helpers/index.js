@@ -1,17 +1,20 @@
 import { hasEmptyValues, tmp } from './objOperations'
 import { setCookie, getCookie, deleteCookie } from './cookie'
-import createKeyFile from './createKeyFile'
+import { createKeyFile, readFile } from './createKeyFile'
 import { createEthAccount, unlockAccount, sendTransaction, getTransaction } from './ethAccount'
-import { decrypt, encrypt, generateRSAKeyPair } from './RSA'
 import updateObjInArr from './updateObjInArr'
 import { setPasswordToLS, getPasswordFromLS, removePasswordFromLS } from './localStorage'
+import { decryptData, encryptData, generateKeyPair } from './cryptography'
 
 export {
   hasEmptyValues, tmp,
   setCookie, getCookie, deleteCookie,
-  createKeyFile,
+  createKeyFile, readFile,
   createEthAccount, unlockAccount, getTransaction, sendTransaction,
-  encrypt, decrypt, generateRSAKeyPair,
+  decryptData, encryptData, generateKeyPair,
   updateObjInArr,
   setPasswordToLS, getPasswordFromLS, removePasswordFromLS
 }
+
+
+// encrypt, decrypt, generateRSAKeyPair,
