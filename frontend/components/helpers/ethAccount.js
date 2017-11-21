@@ -16,6 +16,7 @@ const sendTransaction = transactionObject => (
   web3.eth.sendTransaction(transactionObject)
 )
 
-const getTransaction = txHash => (web3.eth.getTransaction(txHash))
+// const getTransaction = txHash => (web3.eth.getTransaction(txHash))
+const getTransaction = (txHash, callback) => (web3.eth.getTransaction(txHash, callback))
 
 export { createEthAccount, unlockAccount, sendTransaction, getTransaction }

@@ -56,6 +56,7 @@ class MedicalCard extends React.Component {
     unlockAccount(senderEthAddress, senderPassword).then((unlocked) => {
       if (unlocked) {
         sendTransaction(txObj).then((tx) => {
+          console.log('sendTransaction tx', tx)
           if (tx.transactionHash) onAddTransaction(tx.transactionHash, _id)
           else console.log('Hui')
         })

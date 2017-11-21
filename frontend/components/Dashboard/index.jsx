@@ -8,7 +8,7 @@ import {
 import RaisedButton from 'material-ui/RaisedButton'
 import async from 'async'
 import { web3 } from 'libs'
-import { getTransaction, readFile, decryptData } from 'helpers'
+import { getTransaction, readFile, decryptData, getMedicalRecords } from 'helpers'
 import DoctorDashboard from './Doctor'
 import PatientDashboard from './Patient'
 import styles from './styles'
@@ -49,7 +49,14 @@ class Dashboard extends React.Component {
   goTo(path) { this.props.router.push(path) }
 
   updateReqStatus(requestId, status) {
-    this.getMedCardFromBCh()
+    const txHashes = this.props.transactions.data.txs
+    const patientId = this.props.transactions.data._patient
+
+    getMedicalRecords(txHashes, patientId, (err, res) => {
+      console.log('getMedicalRecords err', err)
+      console.log('getMedicalRecords res', res)
+    })
+    // this.setState({ medicalCard: [] }, () => { this.getMedCardFromBCh() })
     // this.props.onUpdateRequestStatus(requestId, { status }).then((response) => {
     //   const msg = response.data.status === 'cancel' ? 'Запрос отменен' : 'Запрос одобрен'
     //   this.props.onShowSnackBar(msg)
@@ -61,41 +68,6 @@ class Dashboard extends React.Component {
     //     this.props.onAddMedicalCard(mCard)
     //   }
     // })
-  }
-
-  // Нужно собрать все транзакции отправленные текущему пациенту
-
-  getMedCardFromBCh() {
-    const { txs } = this.props.transactions.data
-    async.each(txs, (txHash) => {
-      getTransaction(txHash).then(this.pushMedicalRecord)
-    })
-    // txs.forEach((txHash) => {
-    //   getTransaction(txHash).then(this.pushMedicalRecord)
-    // })
-  }
-
-  pushMedicalRecord(tx) {
-    const { medicalCard } = this.state
-    const { txs, _patient } = this.props.transactions.data
-    this.setState({ medicalCard: [...medicalCard, tx.input] }, () => {
-      if (medicalCard.length === txs.length - 1) {
-        console.log('medicalCard fetched')
-        readFile(_patient, this.fileRead)
-      }
-    })
-  }
-
-  fileRead(err, result) {
-    if (err) return console.log('fileRead', err)
-    const keyPair = JSON.parse(result.toString('utf8'))
-    const { privateKey } = keyPair
-    const records = []
-    this.state.medicalCard.forEach((card) => {
-      const decryptedRecord = decryptData(privateKey, web3.utils.hexToUtf8(card))
-      records.push(JSON.parse(decryptedRecord))
-    })
-    console.log('records', records)
   }
 
   deleteRequest(requestId) {
