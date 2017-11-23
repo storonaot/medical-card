@@ -22,8 +22,11 @@ export default function requests(state = defaultState, action) {
     }
     case 'UPDATE_REQUEST_STATUS':
     case 'UPDATE_REQUEST_STATUS_IN_STORE': {
-      const { status, _id } = action.payload
-      return { ...state, data: updateObjInArr(state.data, { _id, status }) }
+      if (state.data) {
+        const { status, _id } = action.payload
+        return { ...state, data: updateObjInArr(state.data, { _id, status }) }
+      }
+      return state
     }
     case 'ADD_NEW_REQEST': {
       const newArr = [...state.data, action.payload]

@@ -20,7 +20,7 @@ const generateSectetKey = (publicKey) => {
 }
 
 const encryptData = (publicKeyPEM, data) => {
-  const dataStr = JSON.stringify(data)
+  const dataStr = forge.util.encodeUtf8(JSON.stringify(data))
   const publicKey = forge.pki.publicKeyFromPem(publicKeyPEM)
   const result = generateSectetKey(publicKey)
   const iv = forge.random.getBytesSync(12)
@@ -52,7 +52,8 @@ const decryptData = (privateKeyPEM, encObjStr) => {
   decipher.start({ iv, tag })
   decipher.update(forge.util.createBuffer(encrypted))
   const pass = decipher.finish()
-  if (pass) return decipher.output.getBytes()
+  // if (pass) return decipher.output.getBytes()
+  if (pass) return forge.util.decodeUtf8(decipher.output.getBytes())
   return 'Fuck'
 }
 

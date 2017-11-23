@@ -22,7 +22,6 @@ const removeRequest = requestId => dispatch => (
       type: 'REMOVE_REQUEST',
       payload: requestId
     })
-    // console.log('response', response)
     return response
   }, (error) => {
     console.error('error', error.response)

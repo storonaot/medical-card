@@ -25,7 +25,6 @@ const fetchTransactions = () => (dispatch) => {
     type: 'FETCH_TXS_ONLOAD'
   })
   axios.get('/api/v1/transactions').then((response) => {
-    console.log('fetchTransactions', response)
     dispatch({
       type: 'FETCH_TXS_SUCCESS',
       payload: response.data

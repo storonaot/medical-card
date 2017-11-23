@@ -6,8 +6,6 @@ import updateObjInArr from './updateObjInArr'
 import { setPasswordToLS, getPasswordFromLS, removePasswordFromLS } from './localStorage'
 import { decryptData, encryptData, generateKeyPair } from './cryptography'
 
-import getMedicalRecords from './tmp'
-
 export {
   hasEmptyValues, tmp,
   setCookie, getCookie, deleteCookie,
@@ -15,9 +13,5 @@ export {
   createEthAccount, unlockAccount, getTransaction, sendTransaction,
   decryptData, encryptData, generateKeyPair,
   updateObjInArr,
-  setPasswordToLS, getPasswordFromLS, removePasswordFromLS,
-  getMedicalRecords
+  setPasswordToLS, getPasswordFromLS, removePasswordFromLS
 }
-
-
-// encrypt, decrypt, generateRSAKeyPair,

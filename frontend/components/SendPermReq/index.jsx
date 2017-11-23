@@ -20,9 +20,7 @@ class SendPermReq extends React.Component {
     this.sendPermission = this.sendPermission.bind(this)
   }
 
-  componentDidMount() {
-    this.props.onGetUser()
-  }
+  componentDidMount() { this.props.onGetUser() }
 
   searchPatient() {
     const login = this.state.search
@@ -113,5 +111,6 @@ SendPermReq.propTypes = {
       _id: PropTypes.string
     })
   }).isRequired,
-  onShowSnackBar: PropTypes.func.isRequired
+  onShowSnackBar: PropTypes.func.isRequired,
+  onGetUser: PropTypes.func.isRequired
 }

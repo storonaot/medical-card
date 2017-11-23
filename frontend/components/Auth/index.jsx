@@ -52,9 +52,8 @@ class Auth extends React.Component {
   }
 
   signUp(err, ethAddress) {
-    if (err) {
-      console.log(err)
-    } else {
+    if (err) console.log(err)
+    else {
       const { login, email, passPhrase, isDoctor } = this.state.signUp
       const data = { login, email, passPhrase, isDoctor, photo: randomPhoto(), ethAddress }
       this.props.onSignUp(data).then((response) => {

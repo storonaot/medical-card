@@ -92,12 +92,11 @@ const addMedicalCard = data => (dispatch) => {
 }
 
 const deleteMedicalCard = doctorId => (dispatch) => {
-  axios.delete(`/api/v1/medical-card/${doctorId}`).then((response) => {
+  axios.delete(`/api/v1/medical-card/${doctorId}`).then(() => {
     dispatch({
       type: 'DELETE_DOCTOR',
       payload: doctorId
     })
-    console.log('deleteMedicalCard', response)
   }, (error) => {
     console.error('deleteMedicalCard err', error.response)
   })

@@ -6,9 +6,8 @@ import {
   deleteMedicalCard, fetchTransactions
 } from 'store2/actions'
 import RaisedButton from 'material-ui/RaisedButton'
-import async from 'async'
-import { web3 } from 'libs'
-import { getTransaction, readFile, decryptData, getMedicalRecords } from 'helpers'
+import { encryptData } from 'helpers'
+import getMedicalRecords from './getMedicalRecords'
 import DoctorDashboard from './Doctor'
 import PatientDashboard from './Patient'
 import styles from './styles'
@@ -26,12 +25,10 @@ class Dashboard extends React.Component {
     }
 
     this.goTo = this.goTo.bind(this)
-    this.updateReqStatus = this.updateReqStatus.bind(this)
+    this.declineRequest = this.declineRequest.bind(this)
+    this.successRequest = this.successRequest.bind(this)
     this.showMedicalCard = this.showMedicalCard.bind(this)
     this.deleteDoctor = this.deleteDoctor.bind(this)
-    this.getMedCardFromBCh = this.getMedCardFromBCh.bind(this)
-    this.pushMedicalRecord = this.pushMedicalRecord.bind(this)
-    this.fileRead = this.fileRead.bind(this)
   }
 
   componentDidMount() {
@@ -48,26 +45,33 @@ class Dashboard extends React.Component {
 
   goTo(path) { this.props.router.push(path) }
 
-  updateReqStatus(requestId, status) {
+  declineRequest(requestId) {
+    const { onUpdateRequestStatus, onShowSnackBar } = this.props
+    onUpdateRequestStatus(requestId, { status: 'cancel' }).then((response) => {
+      if (response.status === 200) onShowSnackBar('Запрос отменен')
+      else console.log('declineRequest response', response)
+    })
+  }
+
+  successRequest(requestId, doctor) {
+    const { onAddMedicalCard, onUpdateRequestStatus, onShowSnackBar } = this.props
+    const docPubKey = doctor.publicKey
     const txHashes = this.props.transactions.data.txs
     const patientId = this.props.transactions.data._patient
-
-    getMedicalRecords(txHashes, patientId, (err, res) => {
-      console.log('getMedicalRecords err', err)
-      console.log('getMedicalRecords res', res)
+    const sendData = { _doctor: doctor._id }
+    onUpdateRequestStatus(requestId, { status: 'success' }).then((response) => {
+      if (response.status === 200) onShowSnackBar('Запрос одобрен')
+      else console.log('successRequest response', response)
     })
-    // this.setState({ medicalCard: [] }, () => { this.getMedCardFromBCh() })
-    // this.props.onUpdateRequestStatus(requestId, { status }).then((response) => {
-    //   const msg = response.data.status === 'cancel' ? 'Запрос отменен' : 'Запрос одобрен'
-    //   this.props.onShowSnackBar(msg)
-    //   if (response.data.status === 'success') {
-    //     const mCard = {
-    //       _doctor: response.data._from,
-    //       medicalCard: null
-    //     }
-    //     this.props.onAddMedicalCard(mCard)
-    //   }
-    // })
+
+    if (txHashes.length) {
+      getMedicalRecords(txHashes, patientId, (err, res) => {
+        const encrypted = encryptData(docPubKey, JSON.stringify(res))
+        onAddMedicalCard({ ...sendData, medicalCard: encrypted })
+      })
+    } else {
+      onAddMedicalCard({ ...sendData, medicalCard: null })
+    }
   }
 
   deleteRequest(requestId) {
@@ -122,10 +126,10 @@ class Dashboard extends React.Component {
       <div>
         <PatientDashboard
           user={user.data}
-          requests={this.getLastThreeRequests()}
+          requests={requests.data}
           showAll={() => { this.goTo('perm-reqs') }}
-          successReq={(requestId) => { this.updateReqStatus(requestId, 'success') }}
-          declineReq={(requestId) => { this.updateReqStatus(requestId, 'cancel') }}
+          successReq={this.successRequest}
+          declineReq={this.declineRequest}
           doctors={doctors}
           deleteDoctor={this.deleteDoctor}
         />
@@ -171,7 +175,12 @@ Dashboard.propTypes = {
   requests: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}))
   }).isRequired,
-  transactions: PropTypes.shape({}).isRequired,
+  transactions: PropTypes.shape({
+    data: PropTypes.shape({
+      txs: PropTypes.array,
+      _patient: PropTypes.shape({})
+    })
+  }).isRequired,
   onFetchTransactions: PropTypes.func.isRequired,
   onGetUser: PropTypes.func.isRequired,
   onUpdateRequestStatus: PropTypes.func.isRequired,

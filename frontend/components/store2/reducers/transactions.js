@@ -7,7 +7,6 @@ const defaultState = {
 export default function transactions(state = defaultState, action) {
   switch (action.type) {
     case 'UPDATE_TRANSACTIONS': {
-      console.log('UPDATE_TRANSACTIONS', action.payload)
       return state
     }
     case 'FETCH_TXS_ONLOAD':

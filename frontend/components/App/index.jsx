@@ -39,14 +39,13 @@ class App extends React.Component {
     socket.on('permReqs', (content) => {
       const { user } = this.props
       const uid = user.data._id
-      const isDoctor = user.data.isDoctor
       const toid = content.data._to._id || content.data._to
       const fromid = content.data._from._id || content.data._from
-      if (uid === toid && !isDoctor) {
+      if (uid === toid) {
         if (content.type === 'create') onAddNewRequest(content.data)
-        if (content.type === 'remove') onDeleteRequestFromStore(content.data._id)
+        else if (content.type === 'remove') onDeleteRequestFromStore(content.data._id)
       }
-      if (uid === fromid && isDoctor) {
+      if (uid === fromid) {
         if (content.type === 'update') onUpdateRequestStatusInStore(content.data)
         else if (content.type === 'remove') onDeleteRequestFromStore(content.data._id)
       }
@@ -70,6 +69,8 @@ class App extends React.Component {
         }
       }
     })
+
+    // TODO: txs sockets
   }
 
   goTo(path) {

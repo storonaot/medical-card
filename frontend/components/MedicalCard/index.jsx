@@ -53,12 +53,12 @@ class MedicalCard extends React.Component {
       to: ethAddress,
       data: web3.utils.toHex(encryptedData)
     }
+
     unlockAccount(senderEthAddress, senderPassword).then((unlocked) => {
       if (unlocked) {
         sendTransaction(txObj).then((tx) => {
-          console.log('sendTransaction tx', tx)
           if (tx.transactionHash) onAddTransaction(tx.transactionHash, _id)
-          else console.log('Hui')
+          else console.log('sendTransaction ERROR')
         })
       }
     })
