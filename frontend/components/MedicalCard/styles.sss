@@ -1,0 +1,36 @@
+.personalInfoWrapper
+  display: flex
+  align-items: center
+  justify-content: space-between
+.personalInfo
+  line-height: 1.5em
+  display: flex
+  align-items: center
+.block + .block
+  margin-top: 20px
+.recordTop
+  font-size: 1.2em
+  line-height: 1.5em
+  display: flex
+  align-items: center
+  justify-content: space-between
+.recordBody
+  margin-top: 20px
+  display: none
+  &.isActive
+    display: block
+.table
+  width: 100%
+  .tableCol
+    padding: 20px 0
+    white-space: pre-line
+    border-bottom: 1px solid rgba(0, 0, 0, .1)
+    font-size: 1.2em
+    line-height: 1.5em
+    &:first-child
+      padding-right: 20px
+      font-weight: 600
+      color: rgba(0, 0, 0, .5)
+      width: 250px
+.doc
+  font-weight: 600

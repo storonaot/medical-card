@@ -10,7 +10,10 @@ import {
   fetchMedicalCard, deleteMedicalCard, updateDoctorsList,
   updatePatientsList, deletePatientFromList
 } from './_medicalCard'
-import { createTransactions, addTransaction, fetchTransactions } from './_transactions'
+import {
+  createTransactions, addTransaction, fetchTransactions,
+  updateTransactionsArr
+} from './_transactions'
 
 export {
   toggleSidebar, getUser, signIn, signUp, signOut,
@@ -18,5 +21,6 @@ export {
   removeRequest, updateRequestStatus, addNewRequest, deleteRequestFromStore,
   updateRequestStatusInStore, fetchPatients, fetchDoctors, addMedicalCard,
   fetchMedicalCard, createTransactions, addTransaction, fetchTransactions,
-  deleteMedicalCard, updateDoctorsList, updatePatientsList, deletePatientFromList
+  deleteMedicalCard, updateDoctorsList, updatePatientsList, deletePatientFromList,
+  updateTransactionsArr
 }

@@ -9,16 +9,18 @@ const createTransactions = () => (dispatch) => {
   })
 }
 
-const addTransaction = (txHash, patientId) => (dispatch) => {
+const addTransaction = (txHash, patientId) => dispatch => (
   axios.put(`/api/v1/transactions/${patientId}`, { tx: txHash }).then((response) => {
     dispatch({
       type: 'UPDATE_TRANSACTIONS',
       payload: response.data
     })
+    return response
   }, (error) => {
     console.error('addTransaction err', error.response)
+    return error.response
   })
-}
+)
 
 const fetchTransactions = () => (dispatch) => {
   dispatch({
@@ -38,4 +40,11 @@ const fetchTransactions = () => (dispatch) => {
   })
 }
 
-export { createTransactions, addTransaction, fetchTransactions }
+const updateTransactionsArr = txHash => (dispatch) => {
+  dispatch({
+    type: 'UPDATE_TXS_ARR',
+    payload: txHash
+  })
+}
+
+export { createTransactions, addTransaction, fetchTransactions, updateTransactionsArr }

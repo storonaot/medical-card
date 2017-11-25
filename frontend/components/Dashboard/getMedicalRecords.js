@@ -9,6 +9,7 @@ const getMedicalRecords = (txHashes, patientId, callback) => {
       async.each(txHashes,
         (txHash, _cb) => {
           getTransaction(txHash, (err, tx) => {
+            console.log(txHash, tx)
             txsArray.push(tx)
             _cb()
           })

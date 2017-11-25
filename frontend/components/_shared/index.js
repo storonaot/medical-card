@@ -8,9 +8,10 @@ import Empty from './Empty'
 import { List, ListItem } from './List'
 import StatusTag from './StatusTag'
 import PermReqControls from './PermReqControls'
+import Overlay from './Overlay'
 
 export {
   Header, Navbar, Paper, GoToDashboardBtn,
   Title, Avatar, Empty, List, ListItem,
-  StatusTag, PermReqControls
+  StatusTag, PermReqControls, Overlay
 }

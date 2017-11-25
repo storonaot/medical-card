@@ -64,9 +64,10 @@ class Dashboard extends React.Component {
       else console.log('successRequest response', response)
     })
 
+
     if (txHashes.length) {
       getMedicalRecords(txHashes, patientId, (err, res) => {
-        const encrypted = encryptData(docPubKey, JSON.stringify(res))
+        const encrypted = encryptData(docPubKey, res)
         onAddMedicalCard({ ...sendData, medicalCard: encrypted })
       })
     } else {
@@ -178,7 +179,7 @@ Dashboard.propTypes = {
   transactions: PropTypes.shape({
     data: PropTypes.shape({
       txs: PropTypes.array,
-      _patient: PropTypes.shape({})
+      _patient: PropTypes.string
     })
   }).isRequired,
   onFetchTransactions: PropTypes.func.isRequired,

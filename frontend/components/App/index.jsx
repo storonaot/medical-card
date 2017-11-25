@@ -4,7 +4,8 @@ import Snackbar from 'material-ui/Snackbar'
 import {
   toggleSidebar, signOut, closeSnackBar, addNewRequest,
   deleteRequestFromStore, updateRequestStatusInStore,
-  updateDoctorsList, updatePatientsList, deletePatientFromList
+  updateDoctorsList, updatePatientsList, deletePatientFromList,
+  updateTransactionsArr
 } from 'store2/actions'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import io from 'socket.io-client'
@@ -33,7 +34,8 @@ class App extends React.Component {
     const {
       onAddNewRequest, onDeleteRequestFromStore,
       onUpdateRequestStatusInStore, onUpdateDoctorsList,
-      onUpdatePatientsList, onDeletePatient, router, location
+      onUpdatePatientsList, onDeletePatient, router, location,
+      onUpdateTransactionsArr
     } = this.props
     this.socket = io.connect()
     socket.on('permReqs', (content) => {
@@ -67,6 +69,15 @@ class App extends React.Component {
           }
           onDeletePatient(content.data._id)
         }
+      }
+    })
+
+    socket.on('transaction', (content) => {
+      const { user } = this.props
+      const uid = user.data._id
+      const patientId = content.data._patient._id || content.data._patient
+      if (uid === patientId) {
+        if (content.type === 'add') onUpdateTransactionsArr(content.data)
       }
     })
 
@@ -153,6 +164,9 @@ export default connect(
     },
     onDeletePatient: (cardId) => {
       dispatch(deletePatientFromList(cardId))
+    },
+    onUpdateTransactionsArr: (txHash) => {
+      dispatch(updateTransactionsArr(txHash))
     }
   })
 )(App)
@@ -182,5 +196,6 @@ App.propTypes = {
   onUpdateRequestStatusInStore: PropTypes.func.isRequired,
   onUpdateDoctorsList: PropTypes.func.isRequired,
   onUpdatePatientsList: PropTypes.func.isRequired,
-  onDeletePatient: PropTypes.func.isRequired
+  onDeletePatient: PropTypes.func.isRequired,
+  onUpdateTransactionsArr: PropTypes.func.isRequired
 }

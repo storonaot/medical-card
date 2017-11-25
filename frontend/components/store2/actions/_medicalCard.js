@@ -60,16 +60,18 @@ const fetchMedicalCard = patientId => (dispatch) => {
     type: 'FETCH_MEDICAL_CARD_ONLOAD'
   })
 
-  axios.get(`/api/v1/medical-card/${patientId}`).then((response) => {
+  return axios.get(`/api/v1/medical-card/${patientId}`).then((response) => {
     dispatch({
       type: 'FETCH_MEDICAL_CARD_SUCCESS',
       payload: response.data
     })
+    return response
   }, (error) => {
     dispatch({
       type: 'FETCH_MEDICAL_CARD_ERROR',
       payload: error.response
     })
+    return error.response
   })
 }
 
