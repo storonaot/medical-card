@@ -1,5 +1,5 @@
 import { toggleSidebar, closeSnackBar, showSnackBar } from './_ui'
-import { getUser, signIn, signUp, signOut, sendPersonalInfo } from './_user'
+import { getUser, signIn, signUp, signOut, updateUser } from './_user'
 import {
   fetchRequests, removeRequest, updateRequestStatus,
   addNewRequest, deleteRequestFromStore, updateRequestStatusInStore
@@ -17,7 +17,7 @@ import {
 
 export {
   toggleSidebar, getUser, signIn, signUp, signOut,
-  sendPersonalInfo, closeSnackBar, showSnackBar, fetchRequests,
+  updateUser, closeSnackBar, showSnackBar, fetchRequests,
   removeRequest, updateRequestStatus, addNewRequest, deleteRequestFromStore,
   updateRequestStatusInStore, fetchPatients, fetchDoctors, addMedicalCard,
   fetchMedicalCard, createTransactions, addTransaction, fetchTransactions,

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { sendPersonalInfo, createTransactions } from 'store2/actions'
+import { updateUser, createTransactions } from 'store2/actions'
 import { createKeyFile, generateKeyPair } from 'helpers'
 import Form from './Form'
 
@@ -68,9 +68,9 @@ class Profile extends React.Component {
         isDoctor={user.isDoctor}
         data={user.personalInfo || this.state}
         updateValue={this.updateValue}
-        sendPersonalInfo={this.createKeyFile}
         disabledButton={this.disabledButton()}
         disabledFields={!!user.personalInfo}
+        updateUser={this.createKeyFile}
       />
     )
   }
@@ -81,7 +81,7 @@ export default connect(
     user: state.user.data
   }),
   dispatch => ({
-    onSendPersonalInfo: (userId, data) => (dispatch(sendPersonalInfo(userId, data))),
+    onSendPersonalInfo: (userId, data) => (dispatch(updateUser(userId, data))),
     onCreateTransactions: () => { dispatch(createTransactions()) }
   })
 )(Profile)

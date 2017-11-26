@@ -3,11 +3,9 @@ import { Paper, Title } from '_shared'
 import {
   fetchRequests, getUser, removeRequest, showSnackBar,
   updateRequestStatus, addMedicalCard, fetchPatients, fetchDoctors,
-  deleteMedicalCard, fetchTransactions
+  deleteMedicalCard
 } from 'store2/actions'
 import RaisedButton from 'material-ui/RaisedButton'
-import { encryptData } from 'helpers'
-import getMedicalRecords from './getMedicalRecords'
 import DoctorDashboard from './Doctor'
 import PatientDashboard from './Patient'
 import styles from './styles'
@@ -31,11 +29,7 @@ class Dashboard extends React.Component {
     this.deleteDoctor = this.deleteDoctor.bind(this)
   }
 
-  componentDidMount() {
-    const { onGetUser, onFetchTransactions, transactions } = this.props
-    onGetUser()
-    if (!transactions.data) onFetchTransactions()
-  }
+  componentDidMount() { this.props.onGetUser() }
 
   getLastThreeRequests() {
     const requests = this.props.requests.data
@@ -55,24 +49,13 @@ class Dashboard extends React.Component {
 
   successRequest(requestId, doctor) {
     const { onAddMedicalCard, onUpdateRequestStatus, onShowSnackBar } = this.props
-    const docPubKey = doctor.publicKey
-    const txHashes = this.props.transactions.data.txs
-    const patientId = this.props.transactions.data._patient
     const sendData = { _doctor: doctor._id }
     onUpdateRequestStatus(requestId, { status: 'success' }).then((response) => {
       if (response.status === 200) onShowSnackBar('Запрос одобрен')
       else console.log('successRequest response', response)
     })
 
-
-    if (txHashes.length) {
-      getMedicalRecords(txHashes, patientId, (err, res) => {
-        const encrypted = encryptData(docPubKey, res)
-        onAddMedicalCard({ ...sendData, medicalCard: encrypted })
-      })
-    } else {
-      onAddMedicalCard({ ...sendData, medicalCard: null })
-    }
+    onAddMedicalCard({ ...sendData, medicalCard: null })
   }
 
   deleteRequest(requestId) {
@@ -90,9 +73,9 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    const { user, router, requests, patients, doctors, transactions } = this.props
-    if (user.loading || requests.loading || transactions.loading) return (<div>Loading...</div>)
-    else if (user.errors || requests.errors || transactions.errors) return (<div>Errors...</div>)
+    const { user, router, requests, patients, doctors } = this.props
+    if (user.loading || requests.loading) return (<div>Loading...</div>)
+    else if (user.errors || requests.errors) return (<div>Errors...</div>)
 
     if (!user.data.personalInfo) {
       return (
@@ -133,6 +116,7 @@ class Dashboard extends React.Component {
           declineReq={this.declineRequest}
           doctors={doctors}
           deleteDoctor={this.deleteDoctor}
+          goToMedCard={() => { this.props.router.push('medical-card/current') }}
         />
       </div>
     )
@@ -145,7 +129,6 @@ export default connect(
     requests: state.requests,
     patients: state.patients,
     doctors: state.doctors,
-    transactions: state.transactions,
     ownProps
   }),
   dispatch => ({
@@ -163,8 +146,7 @@ export default connect(
     onShowSnackBar: (msg) => { dispatch(showSnackBar(msg)) },
     onUpdateRequestStatus: (id, status) => dispatch(updateRequestStatus(id, status)),
     onAddMedicalCard: (data) => { dispatch(addMedicalCard(data)) },
-    onDeleteMedicalCard: (doctorId) => { dispatch(deleteMedicalCard(doctorId)) },
-    onFetchTransactions: () => { dispatch(fetchTransactions()) }
+    onDeleteMedicalCard: (doctorId) => { dispatch(deleteMedicalCard(doctorId)) }
   })
 )(Dashboard)
 
@@ -176,13 +158,6 @@ Dashboard.propTypes = {
   requests: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape({}))
   }).isRequired,
-  transactions: PropTypes.shape({
-    data: PropTypes.shape({
-      txs: PropTypes.array,
-      _patient: PropTypes.string
-    })
-  }).isRequired,
-  onFetchTransactions: PropTypes.func.isRequired,
   onGetUser: PropTypes.func.isRequired,
   onUpdateRequestStatus: PropTypes.func.isRequired,
   onShowSnackBar: PropTypes.func.isRequired,

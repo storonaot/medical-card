@@ -2,11 +2,15 @@ import { Paper, Title, Avatar } from '_shared'
 import RaisedButton from 'material-ui/RaisedButton'
 import styles from '../styles'
 
-const PersonalBlock = ({ data, photo, isDoctor }) => {
+const PersonalBlock = ({ data, photo, isDoctor, goToMedCard }) => {
   const medicalCardBtn = !isDoctor
     ? (
       <div style={{ textAlign: 'center', paddingTop: '20px' }}>
-        <RaisedButton secondary label={'Подробнее'} />
+        <RaisedButton
+          secondary
+          label={'Подробнее'}
+          onClick={goToMedCard}
+        />
       </div>
     )
     : null
@@ -29,8 +33,13 @@ const PersonalBlock = ({ data, photo, isDoctor }) => {
 
 export default PersonalBlock
 
+PersonalBlock.defaultProps = {
+  goToMedCard: () => {}
+}
+
 PersonalBlock.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   photo: PropTypes.string.isRequired,
-  isDoctor: PropTypes.bool.isRequired
+  isDoctor: PropTypes.bool.isRequired,
+  goToMedCard: PropTypes.func
 }

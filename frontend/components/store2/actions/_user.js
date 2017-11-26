@@ -75,7 +75,7 @@ const signOut = () => dispatch => (
   })
 )
 
-const sendPersonalInfo = (userId, data) => dispatch => (
+const updateUser = (userId, data) => dispatch => (
   axios.put(`/api/v1/user/${userId}`, data).then((response) => {
     dispatch({
       type: 'UPDATE_USER',
@@ -83,9 +83,22 @@ const sendPersonalInfo = (userId, data) => dispatch => (
     })
     return response
   }, (error) => {
-    console.error('sendPersonalInfo', error.response)
+    console.error('updateUser', error.response)
     return error
   })
 )
 
-export { getUser, signIn, signUp, signOut, sendPersonalInfo }
+// const sendPersonalInfo = (userId, data) => dispatch => (
+//   axios.put(`/api/v1/user/${userId}`, data).then((response) => {
+//     dispatch({
+//       type: 'UPDATE_USER',
+//       payload: response.data
+//     })
+//     return response
+//   }, (error) => {
+//     console.error('sendPersonalInfo', error.response)
+//     return error
+//   })
+// )
+
+export { getUser, signIn, signUp, signOut, updateUser }

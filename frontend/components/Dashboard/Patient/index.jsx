@@ -6,7 +6,7 @@ import DoctorsList from './DoctorsList/index'
 
 const PatientDashboard = ({
   user, requests, showAll, successReq, declineReq,
-  doctors, deleteDoctor
+  doctors, deleteDoctor, goToMedCard
 }) => {
   const userData = [
     { id: 1, title: 'Login', value: user.login },
@@ -23,6 +23,7 @@ const PatientDashboard = ({
           data={userData}
           photo={user.photo}
           isDoctor={user.isDoctor}
+          goToMedCard={goToMedCard}
         />
       </Col>
       <Col md={6}>
@@ -62,5 +63,6 @@ PatientDashboard.propTypes = {
   declineReq: PropTypes.func.isRequired,
   requests: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   doctors: PropTypes.shape({}).isRequired,
-  deleteDoctor: PropTypes.func.isRequired
+  deleteDoctor: PropTypes.func.isRequired,
+  goToMedCard: PropTypes.func.isRequired
 }

@@ -6,7 +6,7 @@ import { Paper } from '_shared'
 import { Row, Col } from 'react-flexbox-grid'
 
 const Form = ({
-  isDoctor, data, updateValue, sendPersonalInfo,
+  isDoctor, data, updateValue, updateUser,
   disabledButton, disabledFields
 }) => {
   const specialisationField = isDoctor
@@ -64,7 +64,7 @@ const Form = ({
       <RaisedButton
         secondary
         label={disabledFields ? 'Personal Info Saved' : 'Save Personal Info'}
-        onClick={sendPersonalInfo}
+        onClick={updateUser}
         disabled={disabledButton || disabledFields}
       />
     </Paper>
@@ -77,7 +77,7 @@ Form.propTypes = {
   isDoctor: PropTypes.bool.isRequired,
   data: PropTypes.shape({}).isRequired,
   updateValue: PropTypes.func.isRequired,
-  sendPersonalInfo: PropTypes.func.isRequired,
+  updateUser: PropTypes.func.isRequired,
   disabledButton: PropTypes.bool.isRequired,
   disabledFields: PropTypes.bool.isRequired
 }
