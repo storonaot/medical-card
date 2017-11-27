@@ -8,8 +8,8 @@ const unlockAccount = (address, password, callback) => (
   web3.eth.personal.unlockAccount(address, password, callback)
 )
 
-const sendTransaction = transactionObject => (
-  web3.eth.sendTransaction(transactionObject)
+const sendTransaction = (transactionObject, cb) => (
+  web3.eth.sendTransaction(transactionObject, cb)
 )
 
 // const getTransaction = txHash => (web3.eth.getTransaction(txHash))

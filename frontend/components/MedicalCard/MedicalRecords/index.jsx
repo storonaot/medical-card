@@ -4,7 +4,6 @@ import Record from '../Record'
 import styles from '../styles'
 
 const MedicalRecords = ({ medicalCard, setActiveRecord, activeRecord }) => {
-  console.log('medicalCard', medicalCard)
   const medCard = medicalCard || []
   const sortedRecords = medCard.sort((a, b) => {
     if (a.created < b.created) return 1

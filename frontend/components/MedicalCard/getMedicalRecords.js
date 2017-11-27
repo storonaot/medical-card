@@ -9,7 +9,6 @@ const getMedicalRecords = (txHashes, patientId, callback) => {
       async.each(txHashes,
         (txHash, _cb) => {
           getTransaction(txHash, (err, tx) => {
-            // console.log(txHash, tx)
             txsArray.push(tx)
             _cb()
           })
@@ -24,7 +23,7 @@ const getMedicalRecords = (txHashes, patientId, callback) => {
     }
   ], (err, results) => {
     if (err) return callback(err, null)
-    const txs = results[0]
+    const txs = results[0].filter(i => i !== undefined)
     const { privateKey } = results[1]
     const records = []
     txs.forEach((tx) => {

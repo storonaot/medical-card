@@ -1,5 +1,8 @@
 import { connect } from 'react-redux'
-import { getUser, fetchMedicalCard, fetchTransactions, showSnackBar, addTransaction, updateUser } from 'store2/actions'
+import {
+  getUser, fetchMedicalCard, fetchTransactions,
+  showSnackBar, addTransaction, updateUser
+} from 'store2/actions'
 import {
   getPasswordFromLS, unlockAccount, sendTransaction,
   encryptData
@@ -43,7 +46,7 @@ class MedicalCard extends React.Component {
   componentDidMount() {
     const {
       onFetchMedicalCard, onGetUser, params,
-      onFetchTransactions, transactions
+      onFetchTransactions
     } = this.props
     const patientId = params.id
     onGetUser().then((response) => {
@@ -69,7 +72,6 @@ class MedicalCard extends React.Component {
   }
 
   setCurrentMedicalCard(err, result) {
-    console.log('setCurrentMedicalCard', result)
     if (err) console.log('setCurrentMedicalCard err', err)
     else this.setState({ currentMedicalCard: result })
   }
@@ -94,33 +96,32 @@ class MedicalCard extends React.Component {
     const senderEthAddress = this.props.user.data.ethAddress
     const txObj = {
       from: senderEthAddress,
-      gas: 1000000,
       to: ethAddress,
       data: web3.utils.toHex(encryptedData)
     }
 
     unlockAccount(senderEthAddress, senderPassword).then((unlocked) => {
       if (unlocked) {
-        sendTransaction(txObj).then((tx) => {
-          console.log('sendTransaction', tx)
-          if (tx.transactionHash) {
-            onAddTransaction(tx.transactionHash, _id).then(
-              () => {
-                this.setState(
-                  { addingRecord: false, formShown: false },
+        web3.eth.estimateGas(txObj, (error, gas) => {
+          sendTransaction({ ...txObj, gas }, (err, tx) => {
+            if (err) {
+              this.setState({ addingRecord: false }, () => {
+                onShowSnackBar('Не удалось отправить запись, попробуйте еще раз.')
+              })
+              console.error('sendTransaction ERROR', err)
+            } else {
+              onAddTransaction(tx.transactionHash, _id)
+                .then(
                   () => {
-                    this.resetNewRecordFields()
-                    onShowSnackBar('Запись успешно отправлена.')
-                  }
-                )
-              }
-            )
-          } else {
-            this.setState({ addingRecord: false }, () => {
-              onShowSnackBar('Не удалось отправить запись, попробуйте еще раз.')
-            })
-            console.log('sendTransaction ERROR')
-          }
+                    this.setState(
+                      { addingRecord: false, formShown: false },
+                      () => {
+                        this.resetNewRecordFields()
+                        onShowSnackBar('Запись успешно отправлена.')
+                      })
+                  })
+            }
+          })
         })
       }
     })
