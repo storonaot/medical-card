@@ -5,6 +5,7 @@ import { createEthAccount, unlockAccount, sendTransaction, getTransaction } from
 import updateObjInArr from './updateObjInArr'
 import { setPasswordToLS, getPasswordFromLS, removePasswordFromLS } from './localStorage'
 import { decryptData, encryptData, generateKeyPair } from './cryptography'
+import decryptMedicalCard from './decryptMedicalCard'
 
 export {
   hasEmptyValues, tmp,
@@ -13,5 +14,6 @@ export {
   createEthAccount, unlockAccount, getTransaction, sendTransaction,
   decryptData, encryptData, generateKeyPair,
   updateObjInArr,
-  setPasswordToLS, getPasswordFromLS, removePasswordFromLS
+  setPasswordToLS, getPasswordFromLS, removePasswordFromLS,
+  decryptMedicalCard
 }

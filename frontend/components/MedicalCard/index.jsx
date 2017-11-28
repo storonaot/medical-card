@@ -5,10 +5,9 @@ import {
 } from 'store2/actions'
 import {
   getPasswordFromLS, unlockAccount, sendTransaction,
-  encryptData
+  encryptData, decryptMedicalCard
 } from 'helpers'
 import { web3 } from 'libs'
-import decryptMedicalCard from './decryptMedicalCard'
 import getMedicalRecords from './getMedicalRecords'
 import Patient from './Patient'
 import Doctor from './Doctor'

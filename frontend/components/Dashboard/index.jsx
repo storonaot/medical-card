@@ -5,6 +5,7 @@ import {
   updateRequestStatus, addMedicalCard, fetchPatients, fetchDoctors,
   deleteMedicalCard
 } from 'store2/actions'
+import { decryptMedicalCard, encryptData } from 'helpers'
 import RaisedButton from 'material-ui/RaisedButton'
 import DoctorDashboard from './Doctor'
 import PatientDashboard from './Patient'
@@ -49,13 +50,26 @@ class Dashboard extends React.Component {
 
   successRequest(requestId, doctor) {
     const { onAddMedicalCard, onUpdateRequestStatus, onShowSnackBar } = this.props
-    const sendData = { _doctor: doctor._id }
-    onUpdateRequestStatus(requestId, { status: 'success' }).then((response) => {
-      if (response.status === 200) onShowSnackBar('Запрос одобрен')
-      else console.log('successRequest response', response)
+    const { medicalCard, _id } = this.props.user.data
+    decryptMedicalCard(medicalCard, _id, (err, result) => {
+      if (result && result.length) {
+        console.log('doctor', doctor.publicKey)
+        const medCard = []
+        result.forEach((record) => {
+          const encryptedRecord = encryptData(doctor.publicKey, record)
+          medCard.push(encryptedRecord)
+        })
+        const sendData = {
+          records: medCard,
+          _doctor: doctor._id
+        }
+        onUpdateRequestStatus(requestId, { status: 'success' }).then((response) => {
+          if (response.status === 200) onShowSnackBar('Запрос одобрен')
+          else console.log('successRequest response', response)
+        })
+        onAddMedicalCard(sendData)
+      } else onAddMedicalCard({ _doctor: doctor._id, records: [] })
     })
-
-    onAddMedicalCard({ ...sendData, medicalCard: null })
   }
 
   deleteRequest(requestId) {
