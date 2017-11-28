@@ -55,9 +55,9 @@ class MedicalCard extends React.Component {
         if (isDoctor) {
           onFetchMedicalCard(patientId).then((res) => {
             if (res.status === 200) {
-              const { medicalCard } = res.data
+              const { records } = res.data
               const doctorId = res.data._doctor
-              if (medicalCard) decryptMedicalCard(medicalCard, doctorId, this.setCurrentMedicalCard)
+              if (records.length) decryptMedicalCard(records, doctorId, this.setCurrentMedicalCard)
               else this.setCurrentMedicalCard(null, null)
             }
           })
@@ -71,7 +71,19 @@ class MedicalCard extends React.Component {
     })
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.medicalCard.data && this.props.medicalCard.data) {
+      const uid = this.props.user.data._id
+      const oldRecords = this.props.medicalCard.data.records
+      const newRecords = nextProps.medicalCard.data.records
+      if (oldRecords.length < newRecords.length) {
+        decryptMedicalCard(newRecords, uid, this.setCurrentMedicalCard)
+      }
+    }
+  }
+
   setCurrentMedicalCard(err, result) {
+    console.log('111setCurrentMedicalCard', err, result)
     if (err) console.log('setCurrentMedicalCard err', err)
     else this.setState({ currentMedicalCard: result })
   }
@@ -103,14 +115,14 @@ class MedicalCard extends React.Component {
     unlockAccount(senderEthAddress, senderPassword).then((unlocked) => {
       if (unlocked) {
         web3.eth.estimateGas(txObj, (error, gas) => {
-          sendTransaction({ ...txObj, gas }, (err, tx) => {
+          sendTransaction({ ...txObj, gas }, (err, transactionHash) => {
             if (err) {
               this.setState({ addingRecord: false }, () => {
                 onShowSnackBar('Не удалось отправить запись, попробуйте еще раз.')
               })
               console.error('sendTransaction ERROR', err)
             } else {
-              onAddTransaction(tx.transactionHash, _id)
+              onAddTransaction(transactionHash, _id)
                 .then(
                   () => {
                     this.setState(
@@ -144,24 +156,31 @@ class MedicalCard extends React.Component {
     const txsHashes = transactions.data.txs
     const uid = user.data._id
     if (txsHashes.length) {
-      getMedicalRecords(txsHashes, uid, (err, result) => {
-        const encryptedDataForUser = encryptData(user.data.publicKey, result)
-        onUpdateUser(uid, { medicalCard: encryptedDataForUser }).then((response) => {
-          if (response.status === 200) {
-            decryptMedicalCard(response.data.medicalCard, uid, this.setCurrentMedicalCard)
-          }
+      getMedicalRecords(txsHashes, uid, (err, records) => {
+        const encryptedPatientArray = []
+        records.forEach((item) => {
+          const encryptedDataForUser = encryptData(user.data.publicKey, item)
+          encryptedPatientArray.push(encryptedDataForUser)
         })
-        axios.get(`/api/v1/request/params/${uid}`).then((response) => {
-          if (response.status === 200) {
-            const encryptedArr = []
-            response.data.forEach((item) => {
-              const medCardEncrypted = encryptData(item.publicKey, result)
-              encryptedArr.push({
-                medicalCard: medCardEncrypted,
-                _doctor: item._doctor
+        onUpdateUser(uid, { medicalCard: encryptedPatientArray }).then((response) => {
+          if (response.status === 200) this.setCurrentMedicalCard(null, records)
+          else console.log('onUpdateUser', response)
+        })
+        axios.get(`/api/v1/request/params/${uid}`).then((myDoctors) => {
+          if (myDoctors.status === 200) {
+            const encryptedDoctorsArr = []
+            myDoctors.data.forEach((doctor) => {
+              const medCard = []
+              records.forEach((record) => {
+                const encryptedRecord = encryptData(doctor.publicKey, record)
+                medCard.push(encryptedRecord)
+              })
+              encryptedDoctorsArr.push({
+                records: medCard,
+                _doctor: doctor._doctor
               })
             })
-            axios.put(`/api/v1/medical-card/${uid}`, encryptedArr).then((res) => {
+            axios.put(`/api/v1/medical-card/${uid}`, encryptedDoctorsArr).then((res) => {
               console.log('medical-card res', res)
             })
           }

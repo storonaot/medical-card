@@ -30,6 +30,13 @@ const updatePatientsList = medCard => (dispatch) => {
   })
 }
 
+const updateCurrentMedCard = data => (dispatch) => {
+  dispatch({
+    type: 'UPDATE_CURRENT_MED_CARD',
+    payload: data
+  })
+}
+
 const deletePatientFromList = cardId => (dispatch) => {
   dispatch({
     type: 'DELETE_PATIENT_FROM_LIST',
@@ -107,5 +114,5 @@ const deleteMedicalCard = doctorId => (dispatch) => {
 export {
   fetchPatients, fetchDoctors, addMedicalCard, fetchMedicalCard,
   deleteMedicalCard, updateDoctorsList, updatePatientsList,
-  deletePatientFromList
+  deletePatientFromList, updateCurrentMedCard
 }

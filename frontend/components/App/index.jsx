@@ -5,7 +5,7 @@ import {
   toggleSidebar, signOut, closeSnackBar, addNewRequest,
   deleteRequestFromStore, updateRequestStatusInStore,
   updateDoctorsList, updatePatientsList, deletePatientFromList,
-  updateTransactionsArr
+  updateTransactionsArr, updateCurrentMedCard
 } from 'store2/actions'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import io from 'socket.io-client'
@@ -35,7 +35,7 @@ class App extends React.Component {
       onAddNewRequest, onDeleteRequestFromStore,
       onUpdateRequestStatusInStore, onUpdateDoctorsList,
       onUpdatePatientsList, onDeletePatient, router, location,
-      onUpdateTransactionsArr
+      onUpdateTransactionsArr, onUpdateCurrentMedCard
     } = this.props
     this.socket = io.connect()
     socket.on('permReqs', (content) => {
@@ -68,6 +68,9 @@ class App extends React.Component {
             router.push('dashboard')
           }
           onDeletePatient(content.data._id)
+        } else if (content.type === 'update') {
+          onUpdateCurrentMedCard(content.data)
+          console.log('SOCKET medicalCard', content)
         }
       }
     })
@@ -80,8 +83,6 @@ class App extends React.Component {
         if (content.type === 'add') onUpdateTransactionsArr(content.data)
       }
     })
-
-    // TODO: txs sockets
   }
 
   goTo(path) {
@@ -167,6 +168,9 @@ export default connect(
     },
     onUpdateTransactionsArr: (txHash) => {
       dispatch(updateTransactionsArr(txHash))
+    },
+    onUpdateCurrentMedCard: (data) => {
+      dispatch(updateCurrentMedCard(data))
     }
   })
 )(App)
