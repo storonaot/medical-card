@@ -53,7 +53,6 @@ class Dashboard extends React.Component {
     const { medicalCard, _id } = this.props.user.data
     decryptMedicalCard(medicalCard, _id, (err, result) => {
       if (result && result.length) {
-        console.log('doctor', doctor.publicKey)
         const medCard = []
         result.forEach((record) => {
           const encryptedRecord = encryptData(doctor.publicKey, record)
@@ -64,10 +63,11 @@ class Dashboard extends React.Component {
           _doctor: doctor._id
         }
         onUpdateRequestStatus(requestId, { status: 'success' }).then((response) => {
-          if (response.status === 200) onShowSnackBar('Запрос одобрен')
-          else console.log('successRequest response', response)
+          if (response.status === 200) {
+            onShowSnackBar('Запрос одобрен')
+            onAddMedicalCard(sendData)
+          } else console.log('ERROR successRequest', response)
         })
-        onAddMedicalCard(sendData)
       } else onAddMedicalCard({ _doctor: doctor._id, records: [] })
     })
   }
@@ -165,7 +165,12 @@ export default connect(
 )(Dashboard)
 
 Dashboard.propTypes = {
-  user: PropTypes.shape({}).isRequired,
+  user: PropTypes.shape({
+    data: PropTypes.shape({
+      medicalCard: PropTypes.array,
+      _id: PropTypes.string
+    })
+  }).isRequired,
   router: PropTypes.shape({
     push: PropTypes.func
   }).isRequired,

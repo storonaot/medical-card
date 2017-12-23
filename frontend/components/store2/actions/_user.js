@@ -22,6 +22,7 @@ const getUser = () => (dispatch) => {
 }
 
 const signIn = data => (dispatch) => {
+  console.log('signIn data', data)
   dispatch({
     type: 'FETCH_USER_ONLOAD'
   })
