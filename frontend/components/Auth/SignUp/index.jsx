@@ -6,7 +6,7 @@ import styles from '../styles'
 const SignUp = ({ data, updateValue, signUp, disabledButton }) => (
   <div className={styles.controlsWrapper}>
     <TextField
-      floatingLabelText="Login"
+      floatingLabelText="Логин"
       fullWidth
       onChange={(e) => { updateValue('login', e.target.value) }}
       value={data.login}
@@ -18,14 +18,14 @@ const SignUp = ({ data, updateValue, signUp, disabledButton }) => (
       value={data.email}
     />
     <TextField
-      floatingLabelText="Pass Phrase"
+      floatingLabelText="Введите пароль"
       fullWidth
       onChange={(e) => { updateValue('passPhrase', e.target.value) }}
       type="password"
       value={data.passPhrase}
     />
     <TextField
-      floatingLabelText="Pass Phrase Repeat"
+      floatingLabelText="Повторите пароль"
       fullWidth
       className={styles.lastField}
       onChange={(e) => { updateValue('passPhraseRepeat', e.target.value) }}
@@ -33,14 +33,14 @@ const SignUp = ({ data, updateValue, signUp, disabledButton }) => (
       value={data.passPhraseRepeat}
     />
     <Checkbox
-      label="I'm a doctor"
+      label="Я доктор"
       className={`${styles.checkbox} ${styles.lastField}`}
       checked={data.isDoctor}
       onCheck={() => { updateValue('isDoctor', !data.isDoctor) }}
     />
     <RaisedButton
       secondary
-      label="Sign Up"
+      label="Зарегистрироваться"
       onClick={signUp}
       disabled={disabledButton}
     />

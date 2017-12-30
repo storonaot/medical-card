@@ -85,7 +85,7 @@ class Auth extends React.Component {
           onChange={(val) => { this.changeTab(val) }}
           className={styles.tabsWrapper}
         >
-          <Tab label="Sign In" value="signIn">
+          <Tab label="Вход" value="signIn">
             <Paper>
               <SignIn
                 data={signInData}
@@ -95,7 +95,7 @@ class Auth extends React.Component {
               />
             </Paper>
           </Tab>
-          <Tab label="Sign Up" value="signUp">
+          <Tab label="Регистрация" value="signUp">
             <Paper>
               <SignUp
                 data={signUpData}

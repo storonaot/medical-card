@@ -1,24 +1,24 @@
-const net = require('net');
-const port = process.env.PORT ? (process.env.PORT - 100) : 8080;
+const net = require('net')
 
-process.env.ELECTRON_START_URL = `http://localhost:${port}`;
+const port = process.env.PORT ? (process.env.PORT - 100) : 8080
 
-const client = new net.Socket();
+process.env.ELECTRON_START_URL = `http://localhost:${port}`
 
-let startedElectron = false;
-const tryConnection = () => client.connect({port: port}, () => {
-        client.end();
-        if (!startedElectron) {
-            console.log('starting electron');
-            startedElectron = true;
-            const exec = require('child_process').exec;
-            exec('npm run electron');
-        }
-    }
-);
+const client = new net.Socket()
 
-tryConnection();
+let startedElectron = false
+const tryConnection = () => client.connect({ port: port }, () => {
+  client.end()
+  if (!startedElectron) {
+    console.log('starting electron')
+    startedElectron = true
+    const exec = require('child_process').exec
+    exec('npm run electron')
+  }
+})
 
-client.on('error', (error) => {
-    setTimeout(tryConnection, 1000);
-});
+tryConnection()
+
+client.on('error', () => {
+  setTimeout(tryConnection, 1000)
+})

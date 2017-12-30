@@ -1,4 +1,5 @@
 const electron = require('electron')
+
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer')
@@ -11,7 +12,6 @@ let mainWindow
 function createWindow() {
   mainWindow = new BrowserWindow({ width: 800, height: 600 })
 
-  // const mainSession = mainWindow.webContents.session
   const { session } = mainWindow.webContents
 
   const startUrl = process.env.ELECTRON_START_URL || url.format({

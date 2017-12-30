@@ -20,7 +20,7 @@ const SignIn = ({ data, updateValue, signIn, disabledButton }) => (
     />
     <RaisedButton
       secondary
-      label="Sign In"
+      label="Вход"
       onClick={signIn}
       disabled={disabledButton}
     />

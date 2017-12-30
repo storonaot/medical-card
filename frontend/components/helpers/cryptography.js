@@ -52,7 +52,6 @@ const decryptData = (privateKeyPEM, encObjStr) => {
   decipher.start({ iv, tag })
   decipher.update(forge.util.createBuffer(encrypted))
   const pass = decipher.finish()
-  // if (pass) return decipher.output.getBytes()
   if (pass) return forge.util.decodeUtf8(decipher.output.getBytes())
   return 'Fuck'
 }
