@@ -52,7 +52,7 @@ class Dashboard extends React.Component {
     const { onAddMedicalCard, onUpdateRequestStatus, onShowSnackBar } = this.props
     const { medicalCard, _id } = this.props.user.data
     decryptMedicalCard(medicalCard, _id, (err, result) => {
-      if (result && result.length) {
+      if (result) {
         const medCard = []
         result.forEach((record) => {
           const encryptedRecord = encryptData(doctor.publicKey, record)

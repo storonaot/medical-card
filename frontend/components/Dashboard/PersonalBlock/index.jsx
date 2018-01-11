@@ -1,8 +1,10 @@
 import { Paper, Title, Avatar } from '_shared'
 import RaisedButton from 'material-ui/RaisedButton'
+import QRCode from 'qrcode-react'
 import styles from '../styles'
 
 const PersonalBlock = ({ data, photo, isDoctor, goToMedCard }) => {
+  const ethAddr = data.length ? data[data.length - 1].value : null
   const medicalCardBtn = !isDoctor
     ? (
       <div style={{ textAlign: 'center', paddingTop: '20px' }}>
@@ -19,7 +21,10 @@ const PersonalBlock = ({ data, photo, isDoctor, goToMedCard }) => {
     <Paper>
       <Title text={isDoctor ? 'Персональная информация' : 'Моя медицинская карта'} />
       <div className={styles.personalInfo}>
-        <Avatar photo={photo} style={{ marginRight: '20px' }} />
+        <div className={styles.avaWrapper}>
+          <Avatar photo={photo} style={{ margin: '0 auto 20px' }} />
+          {ethAddr && (<QRCode value={ethAddr} size={100} />)}
+        </div>
         <div>
           {data.map(item => (
             <p key={item.id} className={styles.name}>{item.title}: {item.value}</p>

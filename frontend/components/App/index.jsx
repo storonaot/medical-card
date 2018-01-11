@@ -39,6 +39,7 @@ class App extends React.Component {
     } = this.props
     this.socket = io.connect()
     socket.on('permReqs', (content) => {
+      console.log('content', content)
       const { user } = this.props
       const uid = user.data._id
       const toid = content.data._to._id || content.data._to
