@@ -6,7 +6,7 @@ const DoctorsList = ({ doctors, deleteDoctor }) => {
   if (loading) return (<div>Loading...</div>)
   else if (errors) return (<div>Errors...</div>)
 
-  if (!data.length) return (<Empty />)
+  if (!data.length) return (<Empty type="doctors" />)
   return (
     <List>
       {data.map(item => (

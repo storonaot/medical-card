@@ -6,6 +6,10 @@ const emptyObj = {
     msg: 'У вас пока нет ни одного пациента.',
     buttonTxt: 'Отправить запрос'
   },
+  doctors: {
+    msg: 'У вас пока нет ни одного врача.',
+    buttonTxt: 'Отправить запрос'
+  },
   permReq: {
     msg: 'У вас пока нет ни одного запроса.',
     buttonTxt: 'Отправить запрос'
@@ -29,10 +33,11 @@ export default Empty
 
 Empty.defaultProps = {
   type: 'patients',
-  btnClick: null
+  btnClick: null,
+  isDoctor: true
 }
 
 Empty.propTypes = {
-  type: PropTypes.oneOf(['patients', 'permReq']),
+  type: PropTypes.oneOf(['patients', 'permReq', 'doctors']),
   btnClick: PropTypes.func
 }

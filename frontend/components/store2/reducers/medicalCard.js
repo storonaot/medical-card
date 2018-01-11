@@ -13,13 +13,8 @@ export default function medicalCard(state = defaultState, action) {
     case 'FETCH_MEDICAL_CARD_ERROR':
       return { ...state, loading: false, errors: action.payload }
     case 'UPDATE_CURRENT_MED_CARD': {
-      console.log('UPDATE_CURRENT_MED_CARD', state.data)
       if (state.data) {
-        if (action.payload._id === state.data._id) {
-          console.log('UPDATE_CURRENT_MED_CARD', action.payload)
-          return { ...state, data: action.payload }
-        }
-        return state
+        return { ...state, data: action.payload }
       }
       return state
     }

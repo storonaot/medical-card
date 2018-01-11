@@ -22,6 +22,7 @@ const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)))
 const history = syncHistoryWithStore(hashHistory, store)
 
 function notAutorized(nextState, replace) {
+  console.log(getCookie('user'))
   const isAuthPath = nextState.location.pathname === '/auth'
   if (!getCookie('user') && !isAuthPath) replace({ pathname: '/auth' })
 }
